@@ -15,6 +15,8 @@ public interface StringGenerator {
 }
 ```
 
+dsuduhashudhuasdhuashudusaduha
+
 Also, consider the following implementations of ```StringGenerator```. The following class should be provided as defined in ```java.util.ServiceLoader``` documentation ( available [here](http://docs.oracle.com/javase/8/docs/api/java/util/ServiceLoader.html) ).
 ```java
 public class HelloWorldGenerator implements StringGenerator {
