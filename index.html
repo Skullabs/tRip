@@ -1,0 +1,93 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Trip by Skullabs</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Trip</h1>
+        <p>Low coupling module development</p>
+
+        <p class="view"><a href="https://github.com/Skullabs/tRip">View the Project on GitHub <small>Skullabs/tRip</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/Skullabs/tRip/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/Skullabs/tRip/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/Skullabs/tRip">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="trip---low-coupling-module-development" class="anchor" href="#trip---low-coupling-module-development" aria-hidden="true"><span class="octicon octicon-link"></span></a>tRip - Low coupling module development</h1>
+
+<p>tRip intent to be a practical and lightweight tool to provide modularity and low coupling on your source code.</p>
+
+<h3>
+<a id="main-features" class="anchor" href="#main-features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Main Features</h3>
+
+<p>tRip was designed to:</p>
+
+<ul>
+<li>Take care of Singleton's and Stateless' services for your</li>
+<li>Allow you to create modules and extensions to your software without change one LOC in the core implementation</li>
+<li>Fast warm-up: tRip already knows what to provide in compilation phase, there's no need to look into the entire class-path for provided classes</li>
+<li>Zero configuration: just let the <a href="https://github.com/Skullabs/tRip/wiki/Getting-Started:-My-First-Modular-App">ServiceProvider</a> run the software for you</li>
+<li>Factory-based creation of services: you can take control of how a service is provided creating your own factory</li>
+<li>Manually provided data: you still can provide data manually to your software context.</li>
+</ul>
+
+<h3>
+<a id="low-footprint" class="anchor" href="#low-footprint" aria-hidden="true"><span class="octicon octicon-link"></span></a>Low footprint</h3>
+
+<p>tRip is basically two jars:</p>
+
+<ul>
+<li>trip-core ( 30kb ): which is needed to run your application</li>
+<li>trip-processor ( 28kb ): which is responsible by the auto discovery of Singleton's and Stateless' services on your modules. This dependency is needed only during compilation phase.</li>
+</ul>
+
+<h3>
+<a id="lets-get-started" class="anchor" href="#lets-get-started" aria-hidden="true"><span class="octicon octicon-link"></span></a>Lets get started?</h3>
+
+<p>Here is a little tour of tRip main features.</p>
+
+<ul>
+<li><a href="https://github.com/Skullabs/tRip/wiki/Configuring-a-project-with-tRip">Configuring a project with tRip</a></li>
+<li><a href="https://github.com/Skullabs/tRip/wiki/Getting-Started:-My-First-Modular-App">My First Modular App</a></li>
+<li><a href="https://github.com/Skullabs/tRip/wiki/Undertanding-ServiceProvider">Understanding ServiceProvider</a></li>
+<li><a href="https://github.com/Skullabs/tRip/wiki/The-Injection-Process">The Injection Process</a></li>
+<li>
+<a href="https://github.com/Skullabs/tRip/wiki/Providing-Services">Provinding Services</a>
+
+<ul>
+<li><a href="https://github.com/Skullabs/tRip/wiki/Providing-Services:-Automatically-Way">Automatically</a></li>
+<li><a href="https://github.com/Skullabs/tRip/wiki/Providing-Services:-Manually-Way">Manually</a></li>
+</ul>
+</li>
+</ul>
+
+<h3>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h3>
+
+<p>tRip is Apache 2.0 licensed.</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/Skullabs">Skullabs</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
