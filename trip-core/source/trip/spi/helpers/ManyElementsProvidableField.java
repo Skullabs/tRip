@@ -9,7 +9,6 @@ import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
-import trip.spi.helpers.filter.NamedObject;
 
 @RequiredArgsConstructor
 public class ManyElementsProvidableField<T> implements ProvidableField {
@@ -36,18 +35,11 @@ public class ManyElementsProvidableField<T> implements ProvidableField {
 		val provided = field.getAnnotation( ProvidedServices.class );
 		return new ManyElementsProvidableField<T>(
 			field, (Class<T>)provided.exposedAs(),
-			(Condition<T>)extractInjectionFilterCondition( field ) );
+			new AnyObject<T>() );
 	}
 
 	static void assertFieldTypeIsIterable( final Field field ) {
 		if ( !Iterable.class.equals( field.getType() ) )
 			throw new IllegalStateException( "Field " + field.getName() + " expects to have Iterable type." );
-	}
-
-	static Condition<?> extractInjectionFilterCondition( final Field field ) {
-		val annotation = field.getAnnotation( ProvidedServices.class );
-		if ( !annotation.name().isEmpty() )
-			return new NamedObject<Object>( annotation.name() );
-		return new AnyObject<Object>();
 	}
 }

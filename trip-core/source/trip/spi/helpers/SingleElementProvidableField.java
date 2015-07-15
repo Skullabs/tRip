@@ -8,10 +8,8 @@ import trip.spi.Provided;
 import trip.spi.ProviderContext;
 import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
-import trip.spi.helpers.filter.ChainedCondition;
 import trip.spi.helpers.filter.Condition;
 import trip.spi.helpers.filter.IsAssignableFrom;
-import trip.spi.helpers.filter.NamedObject;
 
 @Log
 @Value
@@ -43,18 +41,7 @@ public class SingleElementProvidableField<T> implements ProvidableField {
 			? field.getType() : provided.exposedAs();
 		return new SingleElementProvidableField<T>(
 			field, (Class<T>)expectedClass,
-				(Condition<T>)extractInjectionFilterCondition( field ),
+				(Condition<T>)new IsAssignableFrom( field.getType() ),
 				new FieldProviderContext( field ) );
-	}
-
-	public static Condition<?> extractInjectionFilterCondition( final Field field ) {
-		final ChainedCondition<Object> conditions = new ChainedCondition<Object>();
-		conditions.add( new IsAssignableFrom( field.getType() ) );
-
-		final Provided annotation = field.getAnnotation( Provided.class );
-		if ( !annotation.name().isEmpty() )
-			conditions.add( new NamedObject<Object>( annotation.name() ) );
-
-		return conditions;
 	}
 }
