@@ -7,7 +7,6 @@ import java.util.ServiceConfigurationError;
 import lombok.val;
 import lombok.experimental.ExtensionMethod;
 import trip.spi.helpers.EmptyProviderContext;
-import trip.spi.helpers.KeyValueProviderContext;
 import trip.spi.helpers.ProducerFactoryMap;
 import trip.spi.helpers.ProvidableClass;
 import trip.spi.helpers.SingleObjectIterable;
@@ -17,8 +16,6 @@ import trip.spi.helpers.filter.AnyClass;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
 import trip.spi.helpers.filter.Filter;
-import trip.spi.helpers.filter.NamedClass;
-import trip.spi.helpers.filter.NamedObject;
 
 @ExtensionMethod( Filter.class )
 public class ServiceProvider {
@@ -62,25 +59,12 @@ public class ServiceProvider {
 		return load( interfaceClazz, new AnyObject<T>() );
 	}
 
-	public <T> T load( final Class<T> interfaceClazz, final String name ) throws ServiceProviderException {
-		return load( interfaceClazz, new NamedObject<T>( name ) );
-	}
-
 	public <T> T load( final Class<T> interfaceClazz, final Condition<T> condition ) throws ServiceProviderException {
 		return load( interfaceClazz, condition, new EmptyProviderContext() );
 	}
 
 	public <T> T load( final Class<T> interfaceClazz, final ProviderContext context ) throws ServiceProviderException {
 		return load( interfaceClazz, new AnyObject<T>(), context );
-	}
-
-	public <T> T load( final Class<T> interfaceClazz, final Map<String, Object> contextData ) throws ServiceProviderException {
-		return load( interfaceClazz, new AnyObject<T>(), new KeyValueProviderContext( contextData ) );
-	}
-
-	public <T> T load( final Class<T> interfaceClazz, final String name, final Map<String, Object> contextData )
-			throws ServiceProviderException {
-		return load( interfaceClazz, new NamedObject<T>( name ), new KeyValueProviderContext( contextData ) );
 	}
 
 	public <T> T load( final Class<T> interfaceClazz, final Condition<T> condition, final ProviderContext context )
@@ -97,10 +81,6 @@ public class ServiceProvider {
 		if ( this.producers == null )
 			return null;
 		return (ProducerFactory<T>)this.producers.get( interfaceClazz, condition );
-	}
-
-	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz, final String name ) throws ServiceProviderException {
-		return loadAll( interfaceClazz, new NamedObject<T>( name ) );
 	}
 
 	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz, final Condition<T> condition ) throws ServiceProviderException {
@@ -141,10 +121,6 @@ public class ServiceProvider {
 
 	public <T> Class<T> loadClassImplementing( final Class<T> interfaceClazz ) {
 		return loadClassImplementing( interfaceClazz, new AnyClass<T>() );
-	}
-
-	public <T> Class<T> loadClassImplementing( final Class<T> interfaceClazz, final String named ) {
-		return loadClassImplementing( interfaceClazz, new NamedClass<T>( named ) );
 	}
 
 	public <T> Class<T> loadClassImplementing( final Class<T> interfaceClazz, final Condition<Class<T>> condition ) {
