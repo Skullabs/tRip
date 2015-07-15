@@ -1,5 +1,7 @@
 package trip.spi.helpers;
 
+import static trip.spi.helpers.filter.Filter.first;
+
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -50,6 +52,6 @@ public class ProducerFactoryMap implements Map<Class<?>, List<ProducerFactory<?>
 		final List<ProducerFactory<?>> list = get( clazz );
 		if ( list == null )
 			return null;
-		return list.first(condition);
+		return first(list, condition);
 	}
 }

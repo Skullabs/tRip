@@ -1,11 +1,12 @@
 package trip.spi;
 
+import static trip.spi.helpers.filter.Filter.filter;
+import static trip.spi.helpers.filter.Filter.first;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 
-import lombok.val;
-import lombok.experimental.ExtensionMethod;
 import trip.spi.helpers.EmptyProviderContext;
 import trip.spi.helpers.ProducerFactoryMap;
 import trip.spi.helpers.ProvidableClass;
@@ -15,9 +16,7 @@ import trip.spi.helpers.cache.ServiceLoader;
 import trip.spi.helpers.filter.AnyClass;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
-import trip.spi.helpers.filter.Filter;
 
-@ExtensionMethod( Filter.class )
 public class ServiceProvider {
 
 	final Map<Class<?>, ProvidableClass<?>> providableClassCache = new HashMap<Class<?>, ProvidableClass<?>>();
@@ -27,43 +26,42 @@ public class ServiceProvider {
 
 	public ServiceProvider() {
 		this.providers = createDefaultProvidedData();
-		runAllStartupListeners();
+		runHookBeforeProducersAreReady();
 		this.producers = loadAllProducers();
+		runAllStartupListeners();
 	}
 
-	void runAllStartupListeners() {
-		try {
-			final Iterable<StartupListener> startupListeners = loadAll( StartupListener.class );
-			for ( final StartupListener listener : startupListeners )
-				listener.onStartup( this );
-		} catch ( final ServiceProviderException e ) {
-			throw new IllegalStateException( e );
-		}
+	private void runHookBeforeProducersAreReady() {
+		final Iterable<StartupListener> startupListeners = loadAll( StartupListener.class );
+		for ( final StartupListener listener : startupListeners )
+			listener.beforeProducersReady( this );
 	}
 
-	protected HashMap<Class<?>, Iterable<?>> createDefaultProvidedData() {
-		val injectables = new HashMap<Class<?>, Iterable<?>>();
+	private void runAllStartupListeners() {
+		final Iterable<StartupListener> startupListeners = loadAll( StartupListener.class );
+		for ( final StartupListener listener : startupListeners )
+			listener.onStartup( this );
+	}
+
+	protected Map<Class<?>, Iterable<?>> createDefaultProvidedData() {
+		final Map<Class<?>, Iterable<?>> injectables = new HashMap<Class<?>, Iterable<?>>();
 		injectables.put( getClass(), new SingleObjectIterable<ServiceProvider>( this ) );
 		return injectables;
 	}
 
 	protected ProducerFactoryMap loadAllProducers() {
-		try {
-			return ProducerFactoryMap.from( loadAll( ProducerFactory.class ) );
-		} catch ( final ServiceProviderException e ) {
-			throw new IllegalStateException( e );
-		}
+		return ProducerFactoryMap.from( loadAll( ProducerFactory.class ) );
 	}
 
-	public <T> T load( final Class<T> interfaceClazz ) throws ServiceProviderException {
+	public <T> T load( final Class<T> interfaceClazz ) {
 		return load( interfaceClazz, new AnyObject<T>() );
 	}
 
-	public <T> T load( final Class<T> interfaceClazz, final Condition<T> condition ) throws ServiceProviderException {
+	public <T> T load( final Class<T> interfaceClazz, final Condition<T> condition ) {
 		return load( interfaceClazz, condition, new EmptyProviderContext() );
 	}
 
-	public <T> T load( final Class<T> interfaceClazz, final ProviderContext context ) throws ServiceProviderException {
+	public <T> T load( final Class<T> interfaceClazz, final ProviderContext context ) {
 		return load( interfaceClazz, new AnyObject<T>(), context );
 	}
 
@@ -72,7 +70,7 @@ public class ServiceProvider {
 		final T produced = produceFromFactory( interfaceClazz, condition, context );
 		if ( produced != null )
 			return produced;
-		return loadAll( interfaceClazz, condition ).first( condition );
+		return first( loadAll( interfaceClazz, condition ), condition );
 	}
 
 	@SuppressWarnings( "unchecked" )
@@ -83,12 +81,12 @@ public class ServiceProvider {
 		return (ProducerFactory<T>)this.producers.get( interfaceClazz, condition );
 	}
 
-	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz, final Condition<T> condition ) throws ServiceProviderException {
-		return loadAll( interfaceClazz ).filter( condition );
+	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz, final Condition<T> condition ) {
+		return filter( loadAll( interfaceClazz ), condition );
 	}
 
 	@SuppressWarnings( "unchecked" )
-	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz ) throws ServiceProviderException {
+	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz ) {
 		Iterable<T> iterable = (Iterable<T>)this.providers.get( interfaceClazz );
 		if ( iterable == null )
 			synchronized ( providers ) {
@@ -99,8 +97,7 @@ public class ServiceProvider {
 		return iterable;
 	}
 
-	protected <T> Iterable<T> loadAllServicesImplementingTheInterface( final Class<T> interfaceClazz )
-			throws ServiceProviderException {
+	protected <T> Iterable<T> loadAllServicesImplementingTheInterface( final Class<T> interfaceClazz ) {
 		try {
 			final CachedIterable<T> iterable = loadServiceProvidersFor( interfaceClazz );
 			provideOn( iterable );
@@ -114,7 +111,7 @@ public class ServiceProvider {
 	}
 
 	protected <T> CachedIterable<T> loadServiceProvidersFor(
-			final Class<T> interfaceClazz ) throws ServiceProviderException {
+			final Class<T> interfaceClazz ) {
 		final Iterable<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
 		return ServiceLoader.loadFrom( iterableInterfaces );
 	}
@@ -124,11 +121,11 @@ public class ServiceProvider {
 	}
 
 	public <T> Class<T> loadClassImplementing( final Class<T> interfaceClazz, final Condition<Class<T>> condition ) {
-		return loadClassesImplementing( interfaceClazz ).first( condition );
+		return first( loadClassesImplementing( interfaceClazz ), condition );
 	}
 
 	public <T> Iterable<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz, final Condition<Class<T>> condition ) {
-		return loadClassesImplementing( interfaceClazz ).filter( condition );
+		return filter( loadClassesImplementing( interfaceClazz ), condition );
 	}
 
 	@SuppressWarnings( { "rawtypes", "unchecked" } )
@@ -157,12 +154,12 @@ public class ServiceProvider {
 		this.providers.put( interfaceClazz, iterable );
 	}
 
-	public <T> void provideOn( final Iterable<T> iterable ) throws ServiceProviderException {
+	public <T> void provideOn( final Iterable<T> iterable ) {
 		for ( final T object : iterable )
 			provideOn( object );
 	}
 
-	public void provideOn( final Object object ) throws ServiceProviderException {
+	public void provideOn( final Object object ) {
 		try {
 			final ProvidableClass<?> providableClass = retrieveProvidableClass( object.getClass() );
 			providableClass.provide( object, this );
@@ -185,7 +182,7 @@ public class ServiceProvider {
 	}
 
 	private <T> T produceFromFactory( final Class<T> interfaceClazz, final Condition<T> condition, final ProviderContext context )
-			throws ServiceProviderException {
+	{
 		final ProducerFactory<T> provider = getProviderFor( interfaceClazz, condition );
 		if ( provider != null )
 			return provider.provide( context );
