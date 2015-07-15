@@ -1,6 +1,7 @@
 package trip.spi;
 
-@Singleton( name = "period" )
+@Singleton
+@Period
 public class ClosureProvider implements ProducerFactory<Closure> {
 
 	@Override
@@ -9,11 +10,9 @@ public class ClosureProvider implements ProducerFactory<Closure> {
 	}
 
 	class PeriodClosure implements Closure {
-
 		@Override
 		public Character getSentenceClosureChar() {
 			return Closure.PERIOD;
 		}
-
 	}
 }

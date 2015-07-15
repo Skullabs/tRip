@@ -1,6 +1,7 @@
 package trip.spi.tests;
 
 import trip.spi.Producer;
+import trip.spi.tests.ann.Foo;
 
 public class HelloWorldProvider {
 
@@ -9,7 +10,8 @@ public class HelloWorldProvider {
 		return new HelloWorld();
 	}
 
-	@Producer( name = "foo" )
+	@Producer
+	@Foo
 	public HelloWorld createHelloFooo() {
 		return new HelloFoo();
 	}

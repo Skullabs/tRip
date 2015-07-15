@@ -25,12 +25,6 @@ public class StatelessClass implements GenerableClass {
 	final long identifaction;
 
 	/**
-	 * An easy name to find the class when two or more services are provided to
-	 * a same type.
-	 */
-	final String serviceIdentificationName;
-
-	/**
 	 * The package where the new class should be placed.
 	 */
 	final String packageName;
@@ -71,7 +65,6 @@ public class StatelessClass implements GenerableClass {
 	final List<ExposedMethod> preDestroyMethods;
 
 	/**
-	 * @param serviceIdentificationName
 	 * @param typeCanonicalName
 	 * @param implementationCanonicalName
 	 * @param exposedByClass
@@ -79,11 +72,10 @@ public class StatelessClass implements GenerableClass {
 	 * @param postConstructMethods
 	 * @param preDestroyMethods
 	 */
-	public StatelessClass( final String serviceIdentificationName, final String typeCanonicalName,
+	public StatelessClass( final String typeCanonicalName,
 		final String implementationCanonicalName, final boolean exposedByClass,
 		final List<ExposedMethod> exposedMethods, final List<ExposedMethod> postConstructMethods,
 		final List<ExposedMethod> preDestroyMethods ) {
-		this.serviceIdentificationName = serviceIdentificationName;
 		this.packageName = extractPackageNameFrom( implementationCanonicalName );
 		this.typeCanonicalName = typeCanonicalName;
 		this.typeName = extractClassNameFrom( typeCanonicalName );
@@ -97,8 +89,8 @@ public class StatelessClass implements GenerableClass {
 
 	private long createIdentifier() {
 		final int hashCode =
-				String.format( "%s%s%s%s%s%s%s",
-						packageName, serviceIdentificationName, typeCanonicalName,
+				String.format( "%s%s%s%s%s%s",
+						packageName, typeCanonicalName,
 						typeName, implementationCanonicalName, exposedByClass, exposedMethodsAsString() )
 						.hashCode();
 
@@ -125,10 +117,6 @@ public class StatelessClass implements GenerableClass {
 
 	public Long getIdentifaction() {
 		return identifaction;
-	}
-
-	public String getServiceIdentificationName() {
-		return serviceIdentificationName;
 	}
 
 	public String getPackageName() {
@@ -164,12 +152,11 @@ public class StatelessClass implements GenerableClass {
 	}
 
 	public static StatelessClass from( final TypeElement type ) {
-		final String serviceIdentificationName = SingletonImplementation.getProvidedServiceName( type );
 		final String typeCanonicalName = SingletonImplementation.getProvidedServiceClassAsString( type );
 		final String implementationCanonicalName = type.asType().toString();
 		final boolean exposedByClass = isImplementingClass( typeCanonicalName, type );
 		final List<ExposedMethod> exposedMethods = retrieveExposedMethods( type );
-		return new StatelessClass( serviceIdentificationName, typeCanonicalName,
+		return new StatelessClass( typeCanonicalName,
 			implementationCanonicalName, exposedByClass, exposedMethods,
 			retrieveMethodsAnnotatedWith( type, PostConstruct.class, javax.annotation.PostConstruct.class ),
 			retrieveMethodsAnnotatedWith( type, PreDestroy.class, javax.annotation.PreDestroy.class ) );
@@ -193,6 +180,7 @@ public class StatelessClass implements GenerableClass {
 		return list;
 	}
 
+	@SafeVarargs
 	static List<ExposedMethod> retrieveMethodsAnnotatedWith( final TypeElement type,
 		final Class<? extends Annotation>... annotations ) {
 		final List<ExposedMethod> list = new ArrayList<ExposedMethod>();

@@ -1,0 +1,30 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<groupId>io.skullabs.trip</groupId>
+		<version>2.0.0-SNAPSHOT</version>
+		<artifactId>trip-parent</artifactId>
+	</parent>
+
+	<artifactId>trip-jsr-330-integration-tests</artifactId>
+	<name>tRip: JSR 330 Integration Tests</name>
+	<packaging>jar</packaging>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>trip-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>trip-processor</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>trip-jsr-330</artifactId>
+		</dependency>
+	</dependencies>
+
+</project>

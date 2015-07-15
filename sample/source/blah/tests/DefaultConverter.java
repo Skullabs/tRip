@@ -3,7 +3,7 @@ package blah.tests;
 import lombok.val;
 import lombok.experimental.Delegate;
 import lombok.experimental.ExtensionMethod;
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProviderException;
 
 @SuppressWarnings( "unchecked" )
@@ -19,6 +19,6 @@ public class DefaultConverter<T> {
 
 	private Converter<T> extractDefaultConverterFor( final Class<T> targetClass ) throws ServiceProviderException {
 		val matcher = new GenericTypeMatcher<T>( targetClass );
-		return new ServiceProvider().load( Converter.class, matcher );
+		return new DefaultServiceProvider().load( Converter.class, matcher );
 	}
 }

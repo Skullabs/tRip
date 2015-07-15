@@ -6,11 +6,13 @@ import java.util.List;
 import lombok.val;
 import trip.spi.Producer;
 import trip.spi.Singleton;
+import trip.spi.tests.ann.Names;
 
 @Singleton
 public class NameProducer {
 
-	@Producer( name = "names" )
+	@Producer
+	@Names
 	public List<String> produceNames() {
 		val list = new ArrayList<String>();
 		list.add( "Ereim" );

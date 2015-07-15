@@ -35,7 +35,7 @@ public class StatelessClassGeneratorTest {
 
 	StatelessClass createStatelessImplementationOfInterface() {
 		return new StatelessClass(
-			"", "important.api.Interface", "sample.project.ServiceFromInterface", false,
+			"important.api.Interface", "sample.project.ServiceFromInterface", false,
 			list( voidMethod(), returnableMethod() ),
 			list( returnableMethod() ),
 			list( voidMethod() ) );
@@ -43,7 +43,7 @@ public class StatelessClassGeneratorTest {
 
 	StatelessClass createStatelessImplementationOfClass() {
 		return new StatelessClass(
-			"my-self", "sample.project.ServiceFromInterface",
+			"sample.project.ServiceFromInterface",
 			"sample.project.ServiceFromInterface", true,
 			list( voidMethod(), returnableMethod() ),
 			list( returnableMethod() ),
@@ -58,6 +58,7 @@ public class StatelessClassGeneratorTest {
 		return new ExposedMethod( "voidMethod", "void", emptyStringList() );
 	}
 
+	@SuppressWarnings("unchecked")
 	<T> List<T> list( final T... ts ) {
 		final List<T> list = new ArrayList<T>();
 		for ( final T t : ts )

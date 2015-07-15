@@ -1,16 +1,19 @@
 package trip.spi.helpers;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.util.Collection;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import trip.spi.ProvidedServices;
 import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
-import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
+import trip.spi.helpers.filter.QualifierCondition;
 
 @RequiredArgsConstructor
+@SuppressWarnings( { "unchecked" } )
 public class ManyElementsProvidableField<T> implements ProvidableField {
 
 	final Field field;
@@ -28,17 +31,16 @@ public class ManyElementsProvidableField<T> implements ProvidableField {
 		field.set( instance, value );
 	}
 
-	@SuppressWarnings( { "unchecked" } )
-	public static <T> ProvidableField from( final Field field ) {
+	public static <T> ProvidableField from( Collection<Class<? extends Annotation>> qualifiers, final Field field ) {
 		assertFieldTypeIsIterable( field );
 		field.setAccessible( true );
 		val provided = field.getAnnotation( ProvidedServices.class );
 		return new ManyElementsProvidableField<T>(
 			field, (Class<T>)provided.exposedAs(),
-			new AnyObject<T>() );
+			(Condition<T>)new QualifierCondition<>(qualifiers) );
 	}
 
-	static void assertFieldTypeIsIterable( final Field field ) {
+	private static void assertFieldTypeIsIterable( final Field field ) {
 		if ( !Iterable.class.equals( field.getType() ) )
 			throw new IllegalStateException( "Field " + field.getName() + " expects to have Iterable type." );
 	}

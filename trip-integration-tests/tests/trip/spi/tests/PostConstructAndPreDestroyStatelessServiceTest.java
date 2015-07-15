@@ -7,7 +7,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import trip.spi.Provided;
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProviderException;
 
 public class PostConstructAndPreDestroyStatelessServiceTest {
@@ -17,7 +17,7 @@ public class PostConstructAndPreDestroyStatelessServiceTest {
 
 	@Before
 	public void provideDependencies() throws ServiceProviderException {
-		new ServiceProvider().provideOn( this );
+		new DefaultServiceProvider().provideOn( this );
 	}
 
 	@Test

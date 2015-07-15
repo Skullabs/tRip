@@ -9,7 +9,7 @@ public class SuperclassInjectionTest {
 
 	@Test
 	public void ensureThatInjectedOnSuperclass() throws ServiceProviderException {
-		final ServiceProvider provider = new ServiceProvider();
+		final ServiceProvider provider = new DefaultServiceProvider();
 		final MyPrintable printable = new MyPrintable();
 		provider.provideOn( printable );
 		assertNotNull( printable.printableWord );

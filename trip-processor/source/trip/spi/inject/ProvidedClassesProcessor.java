@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +21,7 @@ import javax.lang.model.element.Element;
 import javax.lang.model.element.ElementKind;
 import javax.lang.model.element.ExecutableElement;
 import javax.lang.model.element.TypeElement;
+import javax.lang.model.type.TypeMirror;
 import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.JavaFileObject;
@@ -61,17 +63,19 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 		return false;
 	}
 
-	void process( final RoundEnvironment roundEnv ) throws IOException {
-		processSingletons( roundEnv );
-		processStateless( roundEnv );
-		processProducers( roundEnv );
+	protected void process( final RoundEnvironment roundEnv ) throws IOException {
+		processSingletons( roundEnv, Singleton.class );
+		processStateless( roundEnv, Stateless.class );
+		processProducers( roundEnv, Producer.class );
 	}
 
-	void processStateless( final RoundEnvironment roundEnv ) throws IOException {
-		final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( Stateless.class );
-		for ( final Element element : annotatedElements )
-			if ( element.getKind() == ElementKind.CLASS )
-				memorizeAServiceImplementation( StatelessClass.from( (TypeElement)element ) );
+	public void processStateless( final RoundEnvironment roundEnv, Class<?extends Annotation> ann ) throws IOException {
+		if ( ann != null ){
+			final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( ann );
+			for ( final Element element : annotatedElements )
+				if ( element.getKind() == ElementKind.CLASS )
+					memorizeAServiceImplementation( StatelessClass.from( (TypeElement)element ) );
+		}
 	}
 
 	void memorizeAServiceImplementation( final StatelessClass clazz ) throws IOException {
@@ -92,11 +96,29 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 		}
 	}
 
-	void processSingletons( final RoundEnvironment roundEnv ) {
-		final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( Singleton.class );
-		for ( final Element element : annotatedElements )
-			if ( element.getKind() == ElementKind.CLASS )
-				memorizeAServiceImplementation( SingletonImplementation.from( element ) );
+	public void processSingletons( final RoundEnvironment roundEnv, Class<?extends Annotation> ann ) throws IOException {
+		if ( ann != null ){
+			final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( ann );
+			for ( final Element element : annotatedElements )
+				if ( element.getKind() == ElementKind.CLASS )
+					memorizeAllImplementations((TypeElement)element);
+		}
+	}
+
+	private void memorizeAllImplementations(final TypeElement type) throws IOException {
+		final String implementationClass = type.asType().toString();
+		final TypeMirror superinterfaceOrClass = SingletonImplementation.getProvidedServiceClass(type);
+		if ( superinterfaceOrClass != null ){
+			System.out.println( "MEM: " + implementationClass + " => " + superinterfaceOrClass.toString() );
+			memorizeAServiceImplementation( new SingletonImplementation( superinterfaceOrClass.toString(), implementationClass ) );
+		}else {
+			System.out.println( "MEM ALL INTERFACES FOR: " + implementationClass );
+			for ( final TypeMirror interfaceType : type.getInterfaces() ){
+				System.out.println( "  :: INTERFACES: " + interfaceType.toString() );
+				memorizeAServiceImplementation( new SingletonImplementation(interfaceType.toString(), implementationClass) );
+			}
+			memorizeAServiceImplementation( new SingletonImplementation(implementationClass, implementationClass) );
+		}
 	}
 
 	void memorizeAServiceImplementation( final SingletonImplementation from ) {
@@ -121,11 +143,13 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 		return foundSingletons;
 	}
 
-	void processProducers( final RoundEnvironment roundEnv ) throws IOException {
-		final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( Producer.class );
-		for ( final Element element : annotatedElements )
-			if ( element.getKind() == ElementKind.METHOD )
-				createAProducerFrom( ProducerImplementation.from( (ExecutableElement)element ) );
+	public void processProducers( final RoundEnvironment roundEnv, Class<?extends Annotation> ann ) throws IOException {
+		if ( ann != null ){
+			final Set<? extends Element> annotatedElements = roundEnv.getElementsAnnotatedWith( ann );
+			for ( final Element element : annotatedElements )
+				if ( element.getKind() == ElementKind.METHOD )
+					createAProducerFrom( ProducerImplementation.from( (ExecutableElement)element ) );
+		}
 	}
 
 	void createAProducerFrom( final GenerableClass clazz ) throws IOException {
@@ -158,7 +182,9 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 	void createSingletonMetaInf() throws IOException {
 		for ( final String interfaceClass : this.singletons.keySet() ) {
 			final Writer resource = createResource( SERVICES + interfaceClass );
+			System.out.println( "Exposing implementations of " + interfaceClass );
 			for ( final String implementation : this.singletons.get( interfaceClass ) ) {
+				System.out.println( " > " + implementation );
 				log( "Exposing " + implementation + " as " + interfaceClass );
 				resource.write( implementation + EOL );
 			}
@@ -195,11 +221,10 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 	}
 
 	private void log( final String msg ) {
-		System.out.println( msg );
-		processingEnv.getMessager().printMessage( Kind.MANDATORY_WARNING, msg );
+		processingEnv.getMessager().printMessage( Kind.NOTE, msg );
 	}
 
-	void flush() throws IOException {
+	public void flush() throws IOException {
 		if ( !this.singletons.isEmpty() )
 			createSingletonMetaInf();
 	}

@@ -65,6 +65,8 @@
 		<module>trip-core</module>
 		<module>trip-processor</module>
 		<module>trip-integration-tests</module>
+		<module>trip-jsr-330</module>
+		<module>trip-jsr-330-integration-tests</module>
 		<module>sample</module>
 	</modules>
 
@@ -131,7 +133,7 @@
 			<dependency>
 				<groupId>${project.groupId}</groupId>
 				<version>${project.version}</version>
-				<artifactId>trip-all</artifactId>
+				<artifactId>trip-jsr-330</artifactId>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

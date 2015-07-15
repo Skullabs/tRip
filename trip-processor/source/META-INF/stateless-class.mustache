@@ -1,11 +1,6 @@
 package {{packageName}};
 
-{{#serviceIdentificationName}}
-@trip.spi.Singleton( name="{{.}}", exposedAs={{{typeCanonicalName}}}.class )
-{{/serviceIdentificationName}}
-{{^serviceIdentificationName}}
 @trip.spi.Singleton( exposedAs={{typeCanonicalName}}.class )
-{{/serviceIdentificationName}}
 @trip.spi.GeneratedFromStatelessService
 public class {{typeName}}Stateless{{identifaction}}
 {{#exposedByClass}}

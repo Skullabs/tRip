@@ -4,7 +4,8 @@ import trip.spi.Producer;
 
 public class TestProviders {
 
-	@Producer( name = "date-format" )
+	@Producer
+	@DateFormat
 	public String createDateFormat() {
 		return "yyyyMMddHHmmss";
 	}

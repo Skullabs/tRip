@@ -88,12 +88,8 @@ public class LazyClassReader<S> implements Iterator<Class<S>> {
 	}
 
 	Iterator<String> readLines( final URL url ) throws IOException {
-		@Cleanup
-		final
-		InputStream inputStream = url.openStream();
-		@Cleanup
-		final
-		BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream, "utf-8" ) );
+		@Cleanup final InputStream inputStream = url.openStream();
+		@Cleanup final BufferedReader reader = new BufferedReader( new InputStreamReader( inputStream, "utf-8" ) );
 		final List<String> lines = new ArrayList<String>();
 		String line = null;
 		while ( ( line = readNextLine( reader ) ) != null )

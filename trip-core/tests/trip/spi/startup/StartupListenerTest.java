@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import trip.spi.Provided;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProvider;
 
 public class StartupListenerTest {
@@ -26,7 +27,7 @@ public class StartupListenerTest {
 	@Before
 	@SneakyThrows
 	public void provideDependencies() {
-		final ServiceProvider provider = new ServiceProvider();
+		final ServiceProvider provider = new DefaultServiceProvider();
 		provider.provideOn( this );
 	}
 }

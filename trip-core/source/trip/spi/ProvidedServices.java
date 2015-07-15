@@ -24,10 +24,5 @@ public @interface ProvidedServices {
 	/**
 	 * The name that identifies the service.
 	 */
-	String name() default "";
-
-	/**
-	 * The name that identifies the service.
-	 */
 	Class<?> exposedAs();
 }

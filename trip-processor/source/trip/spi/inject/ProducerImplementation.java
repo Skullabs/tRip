@@ -10,9 +10,7 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
 
-import trip.spi.Producer;
 import trip.spi.ProviderContext;
-import trip.spi.Stateless;
 
 public class ProducerImplementation implements GenerableClass {
 
@@ -22,34 +20,35 @@ public class ProducerImplementation implements GenerableClass {
 	final String providerMethod;
 	final String type;
 	final String typeName;
-	final String name;
 	final boolean expectsContext;
 	final String serviceFor;
 	final boolean stateless;
+	final List<String> annotations;
 
 	public ProducerImplementation(
 			final String packageName, final String provider,
 			final String providedMethod, final String type,
-			final String typeName, final String name,
+			final String typeName,
 			final boolean expectsContext,
-			final String serviceFor, final boolean stateless ) {
+			final String serviceFor, final boolean stateless,
+			final List<String> annotations ) {
 		this.packageName = stripGenericsFrom( packageName );
 		this.provider = stripGenericsFrom( provider );
 		this.providerMethod = stripGenericsFrom( providedMethod );
 		this.type = stripGenericsFrom( type );
 		this.typeName = stripGenericsFrom( typeName );
-		this.name = name;
 		this.expectsContext = expectsContext;
 		this.serviceFor = serviceFor;
 		this.providerName = String.valueOf( createIdentifier() );
 		this.stateless = stateless;
+		this.annotations = annotations;
 	}
 
 	private long createIdentifier() {
 		final int hashCode =
-				String.format( "%s%s%s%s%s%s%s%s",
+				String.format( "%s%s%s%s%s%s%s",
 						packageName, provider, providerMethod,
-						type, typeName, name, expectsContext, stateless )
+						type, typeName, expectsContext, stateless )
 						.hashCode();
 
 		return hashCode & 0xffffffffl;
@@ -68,9 +67,9 @@ public class ProducerImplementation implements GenerableClass {
 				provider,
 				method.getSimpleName().toString(),
 				typeAsString, typeName,
-				extractNameFrom( method ),
 				measureIfExpectsContextAsParameter( method ),
-				SingletonImplementation.getProvidedServiceClassAsString( type ), false );
+				SingletonImplementation.getProvidedServiceClassAsStringOrNull( type ), false,
+				SingletonImplementation.getQualifierAnnotation(method) );
 	}
 
 	static boolean measureIfExpectsContextAsParameter( final ExecutableElement method ) {
@@ -82,20 +81,6 @@ public class ProducerImplementation implements GenerableClass {
 			throw new IllegalStateException(
 					"@Provider annotated methods should have no parameters, or the parameter should be of type ProviderContext." );
 		return true;
-	}
-
-	static String extractNameFrom( final ExecutableElement element ) {
-		final Producer producer = element.getAnnotation( Producer.class );
-		if ( !producer.name().isEmpty() )
-			return producer.name();
-		return null;
-	}
-
-	static String extractNameFrom( final TypeElement element ) {
-		final Stateless stateless = element.getAnnotation( Stateless.class );
-		if ( !stateless.name().isEmpty() )
-			return stateless.name();
-		return null;
 	}
 
 	static ExecutableElement assertElementIsMethod( final Element element ) {
@@ -124,10 +109,6 @@ public class ProducerImplementation implements GenerableClass {
 
 	public String typeName() {
 		return this.typeName;
-	}
-
-	public String name() {
-		return this.name;
 	}
 
 	@Override

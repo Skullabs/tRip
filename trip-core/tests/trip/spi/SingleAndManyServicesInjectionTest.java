@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class SingleAndManyServicesInjectionTest {
 
-	static final ServiceProvider provider = new ServiceProvider();
+	static final ServiceProvider provider = new DefaultServiceProvider();
 
 	@Test( timeout = 3000 )
 	public void applyStressTestOnMyAssertion() throws ServiceProviderException {
@@ -65,6 +65,7 @@ class InjectableClass {
 	@ProvidedServices( exposedAs = PrintableWord.class )
 	Iterable<PrintableWord> printables;
 
-	@ProvidedServices( exposedAs = PrintableWord.class, name = "foo" )
+	@Foo
+	@ProvidedServices( exposedAs = PrintableWord.class )
 	Iterable<PrintableWord> printableFoos;
 }

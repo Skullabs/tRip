@@ -9,12 +9,12 @@ import lombok.val;
 
 import org.junit.Test;
 
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProviderException;
 
 public class StatelessAndSingletonServicesAtSameInterface {
 
-	final ServiceProvider provider = new ServiceProvider();
+	final DefaultServiceProvider provider = new DefaultServiceProvider();
 
 	@Test
 	public void ensureThatCouldFoundBothImplementations() throws ServiceProviderException {

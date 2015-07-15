@@ -1,7 +1,10 @@
 package trip.spi.helpers;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -19,19 +22,19 @@ public class ProvidableClass<T> {
 
 	public void provide( Object instance, ServiceProvider provider )
 			throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
-		for ( ProvidableField field : fields )
+		for ( final ProvidableField field : fields )
 			field.provide( instance, provider );
 	}
 
-	public static <T> ProvidableClass<T> wrap( Class<T> targetClazz ) {
-		return new ProvidableClass<T>( targetClazz, readClassProvidableFields( targetClazz ) );
+	public static <T> ProvidableClass<T> wrap( QualifierExtractor extractor, Class<T> targetClazz ) {
+		return new ProvidableClass<T>( targetClazz, readClassProvidableFields( extractor, targetClazz ) );
 	}
 
-	static Iterable<ProvidableField> readClassProvidableFields( Class<?> targetClazz ) {
-		List<ProvidableField> providableFields = new ArrayList<ProvidableField>();
+	static Iterable<ProvidableField> readClassProvidableFields( QualifierExtractor extractor, Class<?> targetClazz ) {
+		final List<ProvidableField> providableFields = new ArrayList<ProvidableField>();
 		Class<? extends Object> clazz = targetClazz;
 		while ( !Object.class.equals( clazz ) ) {
-			populateWithProvidableFields( clazz, providableFields );
+			populateWithProvidableFields( extractor, clazz, providableFields );
 			if ( clazz.isAnnotationPresent(GeneratedFromStatelessService.class) )
 				break;
 			clazz = clazz.getSuperclass();
@@ -39,11 +42,21 @@ public class ProvidableClass<T> {
 		return providableFields;
 	}
 
-	static void populateWithProvidableFields( Class<?> targetClazz, List<ProvidableField> providableFields ) {
-		for ( Field field : targetClazz.getDeclaredFields() )
+	static void populateWithProvidableFields( QualifierExtractor extractor, Class<?> targetClazz, List<ProvidableField> providableFields ) {
+		for ( final Field field : targetClazz.getDeclaredFields() ){
+			final Collection<Class<? extends Annotation>> qualifiers = extractQualifiersFromAvoidingNPEWhenCreatingQualifierExtractor(extractor, field);
 			if ( field.isAnnotationPresent( Provided.class ) )
-				providableFields.add( SingleElementProvidableField.from( field ) );
+				providableFields.add( SingleElementProvidableField.from( qualifiers, field ) );
 			else if ( field.isAnnotationPresent( ProvidedServices.class ) )
-				providableFields.add( ManyElementsProvidableField.from( field ) );
+				providableFields.add( ManyElementsProvidableField.from( qualifiers, field ) );
+		}
+	}
+
+	private static Collection<Class<? extends Annotation>> extractQualifiersFromAvoidingNPEWhenCreatingQualifierExtractor(
+			final QualifierExtractor extractor, final Field field)
+	{
+		if ( null == extractor )
+			return Collections.emptyList();
+		return extractor.extractQualifiersFrom(field);
 	}
 }

@@ -8,9 +8,4 @@ import java.lang.annotation.Target;
 @Retention( RetentionPolicy.RUNTIME )
 @Target( { ElementType.METHOD, ElementType.TYPE } )
 public @interface Producer {
-
-	/**
-	 * The name that identifies the service.
-	 */
-	String name() default "";
 }

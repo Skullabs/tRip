@@ -12,7 +12,7 @@ public class InheritedStatelessServiceTest {
 	@Test
 	@SneakyThrows
 	public void ensureThatStatelessServiceDoesntHaveSuperClassDependenciesProvided() {
-		val provider = new ServiceProvider();
+		val provider = new DefaultServiceProvider();
 		val fakeService = (MyFakeStatelessService)provider.load( Readable.class );
 		val superclassProvidedObject = fakeService.getWord();
 		assertNull( superclassProvidedObject );
@@ -21,7 +21,7 @@ public class InheritedStatelessServiceTest {
 	@Test
 	@SneakyThrows
 	public void ensureThatStatelessServiceCouldProvideDataInChildClass() {
-		val provider = new ServiceProvider();
+		val provider = new DefaultServiceProvider();
 		val fakeService = (MyFakeStatelessService)provider.load( Readable.class );
 		val childclassProvidedObject = fakeService.getPrintable();
 		assertNotNull( childclassProvidedObject );

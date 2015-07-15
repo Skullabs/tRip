@@ -10,15 +10,16 @@ import trip.spi.Singleton;
 @Singleton( exposedAs = Converter.class )
 public class DateConverter implements Converter<Date> {
 
-	@Provided( name = "date-format" )
+	@Provided
+	@DateFormat
 	String pattern;
 
 	@Override
 	public Date convert( String string ) throws ConverterException {
 		try {
-			SimpleDateFormat formatter = new SimpleDateFormat( this.pattern );
+			final SimpleDateFormat formatter = new SimpleDateFormat( this.pattern );
 			return formatter.parse( string );
-		} catch ( ParseException cause ) {
+		} catch ( final ParseException cause ) {
 			throw new ConverterException( cause );
 		}
 	}

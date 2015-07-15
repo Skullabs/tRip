@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public class PrintableWorld implements PrintableWord {
 
-	@Provided( name = "period" )
+	@Period
+	@Provided
 	Closure closure;
 
 	@Override
