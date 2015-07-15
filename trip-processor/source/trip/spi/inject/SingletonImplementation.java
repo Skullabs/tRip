@@ -59,7 +59,7 @@ public class SingletonImplementation {
 			foundType = getProvidedServiceClassForStateless( type );
 		if ( foundType == null && isAnnotatedForSingleton( type ) )
 			foundType = getProvidedServiceClassForSingleton( type );
-		if ( foundType == null && isAnnotatedForSingleton( type ) || isAnnotatedForStateless( type ) )
+		if ( foundType == null && (isAnnotatedForSingleton( type ) || isAnnotatedForStateless( type ) ) )
 			foundType = type.asType();
 		return foundType;
 	}
