@@ -2,10 +2,15 @@ package trip.spi.helpers;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
+
+import javax.annotation.PostConstruct;
 
 import lombok.RequiredArgsConstructor;
 import trip.spi.GeneratedFromStatelessService;
@@ -17,15 +22,32 @@ public class ProvidableClass<T> {
 
 	final Class<T> targetClazz;
 	final Iterable<ProvidableField> fields;
+	final Consumer<Object> postConstructor;
 
 	public void provide( Object instance, ServiceProvider provider )
 			throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
+		postConstructor.accept(instance);
 		for ( final ProvidableField field : fields )
 			field.provide( instance, provider );
 	}
 
 	public static <T> ProvidableClass<T> wrap( QualifierExtractor extractor, Class<T> targetClazz ) {
-		return new ProvidableClass<T>( targetClazz, readClassProvidableFields( extractor, targetClazz ) );
+		return new ProvidableClass<T>(
+				targetClazz,
+				readClassProvidableFields( extractor, targetClazz ),
+				readPostConstructor(targetClazz));
+	}
+
+	static Consumer<Object> readPostConstructor( Class<?> targetClazz ){
+		Method postConstructor = null;
+		for ( final Method method : targetClazz.getMethods() )
+			if ( method.isAnnotationPresent(PostConstruct.class) ){
+				postConstructor = method;
+				break;
+			}
+		return postConstructor != null
+			? new PostConstructorMethod(postConstructor)
+			: EmptyMethod.INSTANCE;
 	}
 
 	static Iterable<ProvidableField> readClassProvidableFields( QualifierExtractor extractor, Class<?> targetClazz ) {
@@ -56,5 +78,28 @@ public class ProvidableClass<T> {
 		if ( null == extractor )
 			return Collections.emptyList();
 		return extractor.extractQualifiersFrom(field);
+	}
+}
+
+class EmptyMethod implements Consumer<Object> {
+
+	static final Consumer<Object> INSTANCE = new EmptyMethod();
+
+	@Override
+	public void accept(Object t) {}
+}
+
+@RequiredArgsConstructor
+class PostConstructorMethod implements Consumer<Object> {
+
+	final Method method;
+
+	@Override
+	public void accept(Object target) {
+		try {
+			method.invoke(target);
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+			throw new ServiceProviderException(e);
+		}
 	}
 }

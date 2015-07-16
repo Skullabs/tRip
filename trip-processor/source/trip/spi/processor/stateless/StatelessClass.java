@@ -12,8 +12,6 @@ import javax.lang.model.element.TypeElement;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 
-import trip.spi.PostConstruct;
-import trip.spi.PreDestroy;
 import trip.spi.processor.GenerableClass;
 import trip.spi.processor.SingletonImplementation;
 
@@ -158,8 +156,8 @@ public class StatelessClass implements GenerableClass {
 		final List<ExposedMethod> exposedMethods = retrieveExposedMethods( type );
 		return new StatelessClass( typeCanonicalName,
 			implementationCanonicalName, exposedByClass, exposedMethods,
-			retrieveMethodsAnnotatedWith( type, PostConstruct.class, javax.annotation.PostConstruct.class ),
-			retrieveMethodsAnnotatedWith( type, PreDestroy.class, javax.annotation.PreDestroy.class ) );
+			retrieveMethodsAnnotatedWith( type, javax.annotation.PostConstruct.class ),
+			retrieveMethodsAnnotatedWith( type, javax.annotation.PreDestroy.class ) );
 	}
 
 	public static boolean isImplementingClass( final String typeCanonicalName, TypeElement type ) {

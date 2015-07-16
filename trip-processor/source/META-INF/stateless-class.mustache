@@ -16,7 +16,6 @@ public class {{typeName}}Stateless{{identifaction}}
 	public {{{returnType}}} {{name}}( {{{parametersWithTypesAsString}}} ) {
 		try {
 			final {{{implementationCanonicalName}}} instance = newInstance();
-			postConstruct{{typeName}}{{identifaction}}( instance );
 			try {
 				{{#returnable}}
 				final {{{returnType}}} returnValue = instance.{{name}}( {{parametersAsString}} );
@@ -39,14 +38,7 @@ public class {{typeName}}Stateless{{identifaction}}
 		provider.provideOn( instance );
 		return instance;
 	}
-	
-	void postConstruct{{typeName}}{{identifaction}}(
-			final {{{implementationCanonicalName}}} instance ) throws Throwable {
-		{{#postConstructMethods}}
-		instance.{{name}}();
-		{{/postConstructMethods}}
-	}
-	
+
 	void preDestroy{{typeName}}{{identifaction}}(
 			final {{{implementationCanonicalName}}} instance ) throws Throwable {
 		{{#preDestroyMethods}}
