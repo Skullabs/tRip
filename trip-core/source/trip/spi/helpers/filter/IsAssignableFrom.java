@@ -14,4 +14,9 @@ public class IsAssignableFrom implements Condition<Object> {
 			|| expectedClass.isAssignableFrom( object.getClass() )
 			|| ProducerFactory.class.isInstance( object );
 	}
+
+	@Override
+	public String toString() {
+		return "IsAssignableFrom(" + expectedClass.getCanonicalName() + ")";
+	}
 }

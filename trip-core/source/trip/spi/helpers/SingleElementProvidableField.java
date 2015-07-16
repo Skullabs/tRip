@@ -30,7 +30,7 @@ public class SingleElementProvidableField<T> implements ProvidableField {
 		throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
 		final Object value = provider.load( fieldType, condition, providerContext );
 		if ( value == null )
-			log.warning( "No data found for " + fieldType.getCanonicalName() );
+			log.warning( "No data found for " + fieldType.getCanonicalName() + ". Condition: " + condition );
 		set( instance, value );
 	}
 

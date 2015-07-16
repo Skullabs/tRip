@@ -11,6 +11,7 @@ import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 
 @SupportedAnnotationTypes( "javax.inject.*" )
 public class OptionalCDIProcessor extends AbstractProcessor {
@@ -25,7 +26,13 @@ public class OptionalCDIProcessor extends AbstractProcessor {
 		if ( isClassPresent( DEFAULT_PROCESSOR ) ) {
 			cdiProcessor = newInstanceOf("trip.jsr.cdi.CDIProcessor", AbstractProcessor.class);
 			cdiProcessor.init( processingEnv );
-		}
+		} else
+			warn( "CDIProcessor disabled" );
+	}
+
+	private void warn( String msg ){
+		System.out.println( "[WARN] " + msg );
+		processingEnv.getMessager().printMessage( Kind.WARNING, msg );
 	}
 
 	@Override

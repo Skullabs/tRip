@@ -88,7 +88,7 @@ public class SPIProcessor extends AbstractProcessor {
 	void createAStatelessClassFrom( final StatelessClass clazz ) throws IOException {
 		final String name = clazz.getGeneratedClassCanonicalName();
 		if ( !classExists( name ) ) {
-			log( "Generating " + name );
+			info("Generating " + name);
 			final JavaFileObject sourceFile = filer().createSourceFile( name );
 			final Writer writer = sourceFile.openWriter();
 			this.statelessClassGenerator.write( clazz, writer );
@@ -151,13 +151,14 @@ public class SPIProcessor extends AbstractProcessor {
 	void createAProducerFrom( final GenerableClass clazz ) throws IOException {
 		final String name = clazz.getGeneratedClassCanonicalName();
 		if ( !classExists( name ) ) {
-			log( "Generating " + name );
+			info( "Generating " + name);
 			final JavaFileObject sourceFile = filer().createSourceFile( name );
 			final Writer writer = sourceFile.openWriter();
 			this.factoryProviderClazzTemplate.execute( writer, clazz );
 			writer.close();
 		}
 	}
+
 
 	boolean classExists( final String name ) {
 		try {
@@ -178,9 +179,9 @@ public class SPIProcessor extends AbstractProcessor {
 	void createSingletonMetaInf() throws IOException {
 		for ( final String interfaceClass : this.singletons.keySet() ) {
 			final Writer resource = createResource( SERVICES + interfaceClass );
-			System.out.println( "Exposing implementations of " + interfaceClass );
+			System.out.println( "[INFO] Exposing implementations of " + interfaceClass );
 			for ( final String implementation : this.singletons.get( interfaceClass ) ) {
-				System.out.println( " > " + implementation );
+				System.out.println( "[INFO]  > " + implementation );
 				log( "Exposing " + implementation + " as " + interfaceClass );
 				resource.write( implementation + EOL );
 			}
@@ -214,6 +215,11 @@ public class SPIProcessor extends AbstractProcessor {
 
 	Filer filer() {
 		return this.processingEnv.getFiler();
+	}
+
+	private void info(final String msg) {
+		System.out.println( "[INFO] " + msg );
+		log( msg );
 	}
 
 	private void log( final String msg ) {

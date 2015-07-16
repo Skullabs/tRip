@@ -16,4 +16,9 @@ public class AnyObject<T> implements Condition<T> {
 	public boolean check(Object object) {
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "AnyObject";
+	}
 }
