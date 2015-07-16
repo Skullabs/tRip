@@ -1,4 +1,4 @@
-package trip.spi.inject.stateless;
+package trip.spi.processor.stateless;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -14,8 +14,8 @@ import javax.lang.model.type.TypeMirror;
 
 import trip.spi.PostConstruct;
 import trip.spi.PreDestroy;
-import trip.spi.inject.GenerableClass;
-import trip.spi.inject.SingletonImplementation;
+import trip.spi.processor.GenerableClass;
+import trip.spi.processor.SingletonImplementation;
 
 public class StatelessClass implements GenerableClass {
 

@@ -17,6 +17,7 @@ import trip.spi.helpers.cache.ServiceLoader;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
 
+@SuppressWarnings( { "rawtypes", "unchecked" } )
 public class DefaultServiceProvider implements ServiceProvider {
 
 	final SingletonContext singletonContext = new SingletonContext();
@@ -64,17 +65,17 @@ public class DefaultServiceProvider implements ServiceProvider {
 
 	@Override
 	public <T> T load( final Class<T> interfaceClazz ) {
-		return load( interfaceClazz, new AnyObject<T>() );
+		return load( interfaceClazz, AnyObject.instance() );
 	}
 
 	@Override
 	public <T> T load( final Class<T> interfaceClazz, final Condition<T> condition ) {
-		return load( interfaceClazz, condition, new EmptyProviderContext() );
+		return load( interfaceClazz, condition, EmptyProviderContext.INSTANCE );
 	}
 
 	@Override
 	public <T> T load( final Class<T> interfaceClazz, final ProviderContext context ) {
-		return load( interfaceClazz, new AnyObject<T>(), context );
+		return load( interfaceClazz, AnyObject.instance(), context );
 	}
 
 	@Override
@@ -92,7 +93,6 @@ public class DefaultServiceProvider implements ServiceProvider {
 	}
 
 	@Override
-	@SuppressWarnings( "unchecked" )
 	public <T> Iterable<T> loadAll( final Class<T> interfaceClazz ) {
 		Iterable<T> iterable = (Iterable<T>)this.providers.get( interfaceClazz );
 		if ( iterable == null )
@@ -123,7 +123,6 @@ public class DefaultServiceProvider implements ServiceProvider {
 		return singletonContext.instantiate(iterableInterfaces);
 	}
 
-	@SuppressWarnings( { "rawtypes", "unchecked" } )
 	public <T> Iterable<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz ) {
 		Iterable<Class<T>> implementations = (Iterable)implementedClasses.get( interfaceClazz );
 		if ( implementations == null )
@@ -188,7 +187,6 @@ public class DefaultServiceProvider implements ServiceProvider {
 		return null;
 	}
 
-	@SuppressWarnings( "unchecked" )
 	public <T> ProducerFactory<T> getProviderFor( final Class<T> interfaceClazz, final Condition<T> condition ) {
 		if ( this.producers == null )
 			return null;

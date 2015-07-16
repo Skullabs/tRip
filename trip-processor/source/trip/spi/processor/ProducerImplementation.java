@@ -1,6 +1,6 @@
-package trip.spi.inject;
+package trip.spi.processor;
 
-import static trip.spi.inject.NameTransformations.stripGenericsFrom;
+import static trip.spi.processor.NameTransformations.stripGenericsFrom;
 
 import java.util.List;
 

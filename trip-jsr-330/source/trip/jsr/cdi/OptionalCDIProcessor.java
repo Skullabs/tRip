@@ -15,15 +15,17 @@ import javax.lang.model.element.TypeElement;
 @SupportedAnnotationTypes( "javax.inject.*" )
 public class OptionalCDIProcessor extends AbstractProcessor {
 
-	private static final String DEFAULT_PROCESSOR = "trip.spi.inject.ProvidedClassesProcessor";
+	private static final String DEFAULT_PROCESSOR = "trip.spi.processor.SPIProcessor";
 
 	AbstractProcessor cdiProcessor;
 
 	@Override
 	public synchronized void init(ProcessingEnvironment processingEnv) {
 		super.init(processingEnv);
-		if ( isClassPresent(DEFAULT_PROCESSOR) )
+		if ( isClassPresent( DEFAULT_PROCESSOR ) ) {
 			cdiProcessor = newInstanceOf("trip.jsr.cdi.CDIProcessor", AbstractProcessor.class);
+			cdiProcessor.init( processingEnv );
+		}
 	}
 
 	@Override

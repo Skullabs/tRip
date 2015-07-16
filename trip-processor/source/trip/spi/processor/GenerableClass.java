@@ -1,4 +1,4 @@
-package trip.spi.inject;
+package trip.spi.processor;
 
 public interface GenerableClass {
 

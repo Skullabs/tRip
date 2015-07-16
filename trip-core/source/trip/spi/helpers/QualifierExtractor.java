@@ -25,4 +25,18 @@ public class QualifierExtractor {
 				return true;
 		return false;
 	}
+
+	public boolean isASingleElementProvider( Field field ) {
+		for ( final FieldQualifierExtractor extractor : extractors )
+			if ( extractor.isASingleElementProvider( field ) )
+				return true;
+		return false;
+	}
+
+	public boolean isAManyElementsProvider( Field field ) {
+		for ( final FieldQualifierExtractor extractor : extractors )
+			if ( extractor.isAManyElementsProvider( field ) )
+				return true;
+		return false;
+	}
 }

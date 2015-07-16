@@ -9,6 +9,7 @@ import trip.spi.ProducerFactory;
 import trip.spi.ServiceProvider;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
+import trip.spi.helpers.filter.Filter;
 
 @RequiredArgsConstructor
 @SuppressWarnings({"rawtypes","unchecked"})
@@ -25,6 +26,9 @@ public class CDIServiceProvider implements ServiceProvider {
 
 	public <T> Provider<T> getProviderFor( Class<T> clazz ) {
 		final ProducerFactory factory = wrapped.getProviderFor(clazz, ANY);
-		return new ProviderWrapper<>( factory );
+		if ( factory != null )
+			return new ProviderWrapper<>( factory );
+		T t = Filter.first( wrapped.loadAll( clazz ), AnyObject.instance() );
+		return new SingleElementProvider<T>( t );
 	}
 }

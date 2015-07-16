@@ -9,8 +9,6 @@ import java.util.List;
 
 import lombok.RequiredArgsConstructor;
 import trip.spi.GeneratedFromStatelessService;
-import trip.spi.Provided;
-import trip.spi.ProvidedServices;
 import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
 
@@ -45,9 +43,9 @@ public class ProvidableClass<T> {
 	static void populateWithProvidableFields( QualifierExtractor extractor, Class<?> targetClazz, List<ProvidableField> providableFields ) {
 		for ( final Field field : targetClazz.getDeclaredFields() ){
 			final Collection<Class<? extends Annotation>> qualifiers = extractQualifiersFromAvoidingNPEWhenCreatingQualifierExtractor(extractor, field);
-			if ( field.isAnnotationPresent( Provided.class ) )
+			if ( extractor.isASingleElementProvider( field ) )
 				providableFields.add( SingleElementProvidableField.from( qualifiers, field ) );
-			else if ( field.isAnnotationPresent( ProvidedServices.class ) )
+			else if ( extractor.isAManyElementsProvider( field ) )
 				providableFields.add( ManyElementsProvidableField.from( qualifiers, field ) );
 		}
 	}

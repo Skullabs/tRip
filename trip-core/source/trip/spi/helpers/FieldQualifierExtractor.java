@@ -16,4 +16,8 @@ public interface FieldQualifierExtractor {
 	}
 
 	boolean isAnnotatedWithQualifierAnnotation(Class<? extends Annotation> ann);
+
+	boolean isASingleElementProvider( Field field );
+
+	boolean isAManyElementsProvider( Field field );
 }

@@ -3,6 +3,8 @@ package trip.jsr.cdi;
 @SuppressWarnings("unchecked")
 abstract class CDILoaderOfClasses {
 
+	static final String ANNOTATION_PRODUCES = "javax.enterprise.inject.Produces";
+
 	static <T> Class<? extends T> loadClass( String className ){
 		try {
 			return (Class<? extends T>)Class.forName(className);

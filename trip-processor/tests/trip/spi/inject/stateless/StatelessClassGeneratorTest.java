@@ -11,6 +11,10 @@ import java.util.Scanner;
 
 import org.junit.Test;
 
+import trip.spi.processor.stateless.ExposedMethod;
+import trip.spi.processor.stateless.StatelessClass;
+import trip.spi.processor.stateless.StatelessClassGenerator;
+
 public class StatelessClassGeneratorTest {
 
 	@Test

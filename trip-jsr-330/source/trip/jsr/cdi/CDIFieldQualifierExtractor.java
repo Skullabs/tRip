@@ -1,13 +1,14 @@
-package trip.spi.helpers;
+package trip.jsr.cdi;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 
-import trip.spi.Provided;
-import trip.spi.ProvidedServices;
-import trip.spi.Qualifier;
+import javax.inject.Inject;
+import javax.inject.Qualifier;
 
-public class DefaultFieldQualifierExtractor implements FieldQualifierExtractor {
+import trip.spi.helpers.FieldQualifierExtractor;
+
+public class CDIFieldQualifierExtractor implements FieldQualifierExtractor {
 
 	@Override
 	public boolean isAnnotatedWithQualifierAnnotation(Class<? extends Annotation> ann) {
@@ -16,11 +17,11 @@ public class DefaultFieldQualifierExtractor implements FieldQualifierExtractor {
 
 	@Override
 	public boolean isASingleElementProvider( Field field ) {
-		return field.isAnnotationPresent( Provided.class );
+		return field.isAnnotationPresent( Inject.class );
 	}
 
 	@Override
 	public boolean isAManyElementsProvider( Field field ) {
-		return field.isAnnotationPresent( ProvidedServices.class );
+		return false;
 	}
 }

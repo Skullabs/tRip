@@ -1,6 +1,6 @@
-package trip.spi.inject;
+package trip.spi.processor;
 
-import static trip.spi.inject.NameTransformations.stripGenericsFrom;
+import static trip.spi.processor.NameTransformations.stripGenericsFrom;
 
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -43,7 +43,10 @@ public class SingletonImplementation {
 	}
 
 	public static String getProvidedServiceClassAsStringOrNull( final TypeElement type ) {
-		return getProvidedServiceClassAsString(type, null);
+		String string = getProvidedServiceClassAsString( type, null );
+		if ( string == null && ( isAnnotatedForSingleton( type ) || isAnnotatedForStateless( type ) ) )
+			string = type.asType().toString();
+		return string;
 	}
 
 	private static String getProvidedServiceClassAsString(final TypeElement type, String defaultValue) {
@@ -59,8 +62,6 @@ public class SingletonImplementation {
 			foundType = getProvidedServiceClassForStateless( type );
 		if ( foundType == null && isAnnotatedForSingleton( type ) )
 			foundType = getProvidedServiceClassForSingleton( type );
-		if ( foundType == null && (isAnnotatedForSingleton( type ) || isAnnotatedForStateless( type ) ) )
-			foundType = type.asType();
 		return foundType;
 	}
 

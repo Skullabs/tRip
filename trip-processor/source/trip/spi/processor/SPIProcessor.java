@@ -1,4 +1,4 @@
-package trip.spi.inject;
+package trip.spi.processor;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,14 +32,14 @@ import trip.spi.ProducerFactory;
 import trip.spi.Singleton;
 import trip.spi.Stateless;
 import trip.spi.helpers.cache.ServiceLoader;
-import trip.spi.inject.stateless.StatelessClass;
-import trip.spi.inject.stateless.StatelessClassGenerator;
+import trip.spi.processor.stateless.StatelessClass;
+import trip.spi.processor.stateless.StatelessClassGenerator;
 
 import com.github.mustachejava.DefaultMustacheFactory;
 import com.github.mustachejava.Mustache;
 
 @SupportedAnnotationTypes( "trip.spi.*" )
-public class ProvidedClassesProcessor extends AbstractProcessor {
+public class SPIProcessor extends AbstractProcessor {
 
 	static final String EOL = "\n";
 	static final String SERVICES = "META-INF/services/";
@@ -108,15 +108,11 @@ public class ProvidedClassesProcessor extends AbstractProcessor {
 	private void memorizeAllImplementations(final TypeElement type) throws IOException {
 		final String implementationClass = type.asType().toString();
 		final TypeMirror superinterfaceOrClass = SingletonImplementation.getProvidedServiceClass(type);
-		if ( superinterfaceOrClass != null ){
-			System.out.println( "MEM: " + implementationClass + " => " + superinterfaceOrClass.toString() );
+		if ( superinterfaceOrClass != null )
 			memorizeAServiceImplementation( new SingletonImplementation( superinterfaceOrClass.toString(), implementationClass ) );
-		}else {
-			System.out.println( "MEM ALL INTERFACES FOR: " + implementationClass );
-			for ( final TypeMirror interfaceType : type.getInterfaces() ){
-				System.out.println( "  :: INTERFACES: " + interfaceType.toString() );
+		else {
+			for ( final TypeMirror interfaceType : type.getInterfaces() )
 				memorizeAServiceImplementation( new SingletonImplementation(interfaceType.toString(), implementationClass) );
-			}
 			memorizeAServiceImplementation( new SingletonImplementation(implementationClass, implementationClass) );
 		}
 	}

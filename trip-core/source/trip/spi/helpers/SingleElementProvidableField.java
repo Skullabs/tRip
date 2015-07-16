@@ -41,9 +41,8 @@ public class SingleElementProvidableField<T> implements ProvidableField {
 	public static <T> ProvidableField from( Collection<Class<? extends Annotation>> qualifiers, final Field field ) {
 		field.setAccessible( true );
 		final Provided provided = field.getAnnotation( Provided.class );
-		final Class expectedClass = provided.exposedAs().equals( Provided.class )
+		final Class expectedClass = provided == null || provided.exposedAs().equals( Provided.class )
 			? field.getType() : provided.exposedAs();
-		System.out.println( "SingleElementProvidableField: " + field + " => " + expectedClass );
 		return new SingleElementProvidableField<T>(
 			field, (Class<T>)expectedClass,
 				createInjectionCondition( qualifiers, field),
