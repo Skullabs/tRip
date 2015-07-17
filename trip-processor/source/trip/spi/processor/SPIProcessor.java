@@ -31,7 +31,7 @@ import trip.spi.Producer;
 import trip.spi.ProducerFactory;
 import trip.spi.Singleton;
 import trip.spi.Stateless;
-import trip.spi.helpers.cache.ServiceLoader;
+import trip.spi.helpers.ServiceLoader;
 import trip.spi.processor.stateless.StatelessClass;
 import trip.spi.processor.stateless.StatelessClassGenerator;
 

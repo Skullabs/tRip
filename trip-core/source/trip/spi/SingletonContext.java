@@ -6,10 +6,8 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 
 @RequiredArgsConstructor
-@Log
 class SingletonContext {
 
 	final Map<Class<?>, Object> cache = new HashMap<>();
@@ -31,8 +29,7 @@ class SingletonContext {
 			final T instance = clazz.newInstance();
 			return instance;
 		} catch ( final IllegalAccessException | InstantiationException cause ) {
-			log.warning( cause.getMessage() );
-			throw new IllegalStateException( cause );
+			return null;
 		}
 	}
 }

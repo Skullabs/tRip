@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 
+import trip.spi.helpers.EmptyIterable;
 import trip.spi.helpers.EmptyProviderContext;
 import trip.spi.helpers.FieldQualifierExtractor;
 import trip.spi.helpers.ProducerFactoryMap;
@@ -123,7 +124,10 @@ public class DefaultServiceProvider implements ServiceProvider {
 		final List<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
 		if ( !iterableInterfaces.isEmpty() )
 			return singletonContext.instantiate( iterableInterfaces );
-		return new SingleObjectIterable<>( singletonContext.instantiate( interfaceClazz ) );
+		T instance = singletonContext.instantiate( interfaceClazz );
+		if ( instance != null )
+			return new SingleObjectIterable<>( instance );
+		return EmptyIterable.instance();
 	}
 
 	public <T> List<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz ) {
