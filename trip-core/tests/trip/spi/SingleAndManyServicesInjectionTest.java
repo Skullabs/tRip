@@ -2,6 +2,7 @@ package trip.spi;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import lombok.Getter;
@@ -11,7 +12,7 @@ import org.junit.Test;
 
 public class SingleAndManyServicesInjectionTest {
 
-	static final ServiceProvider provider = new DefaultServiceProvider();
+	final ServiceProvider provider = new DefaultServiceProvider();
 
 	@Test( timeout = 3000 )
 	public void applyStressTestOnMyAssertion() throws ServiceProviderException {
@@ -53,6 +54,14 @@ public class SingleAndManyServicesInjectionTest {
 		for ( val item : iterable )
 			if ( item.getClass().equals( clazz ) )
 				fail( "Iterable contains an object from type " + clazz.getCanonicalName() );
+	}
+
+	@Test
+	public void ensureThatNonManagedClassesAreCreatedEveryTime() {
+		InjectableClass injectable = provider.load( InjectableClass.class );
+		assertNotNull( injectable );
+		assertPrintablesArePopulatedAsExpected( injectable );
+		assertPrintableFoosArePopulatedAsExpected( injectable );
 	}
 }
 

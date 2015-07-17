@@ -20,16 +20,15 @@ class SingletonContext {
 		for ( final Class<T> clazz : classes ){
 			T object = (T)cache.get(clazz);
 			if ( object == null )
-				object = instantiate(clazz);
+				cache.put( clazz, object = instantiate( clazz ) );
 			list.add(object);
 		}
 		return list;
 	}
 
-	<T> T instantiate( Class<T> clazz ) {
+	public <T> T instantiate( Class<T> clazz ) {
 		try {
 			final T instance = clazz.newInstance();
-			cache.put( clazz, instance);
 			return instance;
 		} catch ( final IllegalAccessException | InstantiationException cause ) {
 			log.warning( cause.getMessage() );

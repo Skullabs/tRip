@@ -4,6 +4,7 @@ import static trip.spi.helpers.filter.Filter.filter;
 import static trip.spi.helpers.filter.Filter.first;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.ServiceConfigurationError;
 
@@ -12,8 +13,8 @@ import trip.spi.helpers.FieldQualifierExtractor;
 import trip.spi.helpers.ProducerFactoryMap;
 import trip.spi.helpers.ProvidableClass;
 import trip.spi.helpers.QualifierExtractor;
+import trip.spi.helpers.ServiceLoader;
 import trip.spi.helpers.SingleObjectIterable;
-import trip.spi.helpers.cache.ServiceLoader;
 import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
 
@@ -119,15 +120,17 @@ public class DefaultServiceProvider implements ServiceProvider {
 
 	protected <T> Iterable<T> loadServiceProvidersFor(
 			final Class<T> interfaceClazz ) {
-		final Iterable<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
-		return singletonContext.instantiate(iterableInterfaces);
+		final List<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
+		if ( !iterableInterfaces.isEmpty() )
+			return singletonContext.instantiate( iterableInterfaces );
+		return new SingleObjectIterable<>( singletonContext.instantiate( interfaceClazz ) );
 	}
 
-	public <T> Iterable<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz ) {
-		Iterable<Class<T>> implementations = (Iterable)implementedClasses.get( interfaceClazz );
+	public <T> List<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz ) {
+		List<Class<T>> implementations = (List)implementedClasses.get( interfaceClazz );
 		if ( implementations == null )
 			synchronized ( implementedClasses ) {
-				implementations = (Iterable)implementedClasses.get( interfaceClazz );
+				implementations = (List)implementedClasses.get( interfaceClazz );
 				if ( implementations == null ) {
 					implementations = ServiceLoader.loadImplementationsFor( interfaceClazz );
 					implementedClasses.put( (Class)interfaceClazz, (Iterable)implementations );
