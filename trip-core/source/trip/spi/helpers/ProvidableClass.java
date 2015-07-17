@@ -26,9 +26,9 @@ public class ProvidableClass<T> {
 
 	public void provide( Object instance, ServiceProvider provider )
 			throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
-		postConstructor.accept(instance);
 		for ( final ProvidableField field : fields )
 			field.provide( instance, provider );
+		postConstructor.accept(instance);
 	}
 
 	public static <T> ProvidableClass<T> wrap( QualifierExtractor extractor, Class<T> targetClazz ) {
