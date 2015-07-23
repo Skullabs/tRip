@@ -9,7 +9,6 @@ abstract class CDILoaderOfClasses {
 		try {
 			return (Class<? extends T>)Class.forName(className);
 		} catch (final ClassNotFoundException e) {
-			e.printStackTrace();
 			return null;
 		}
 	}
