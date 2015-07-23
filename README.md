@@ -114,7 +114,37 @@ public class Game {
 }
 ```
 
-#### 3.2 Disambiguation
+#### 3.2. Producing data orthogonally
+Is possible to produce data to be injected using a factory pattern. To achieve this, tRip provides the __producer method__ approach. A producer method generates an object that can then be injected. Typically, you use producer methods in the following situations:
+- When you want to inject an object that is not itself a bean
+- When the concrete type of the object to be injected may vary at runtime
+- When the object requires some custom initialization that the bean constructor does not perform.
+
+```java
+@Singleton
+public class DatabaseAccess {
+
+  @Provided DatabaseConfig dbConfig;
+  
+  public Connection getConnection(){
+    // a method that uses dbConfig to retrieve a database connection
+  }
+}
+
+@Singleton
+public class DBConfigProducer {
+
+  @Producer
+  public DatabaseConfig produceDbConfig(){
+    // produce dbConfig for further usage
+  }
+}
+```
+The above example illustrates how is possible to produce a DatabaseConfig at runtime. Everytime a service request for a ```DatabaseConfig``` dependency, the ```DBConfigProducer.produceDbConfig``` method will be called. It means:
+- it will be called once per Singleton instance
+- it will be called every time a Stateless' service public method is called
+
+#### 3.3 Disambiguation
 Sometimes we have more than one dependency provided with some Interface. It is possible to
 create a qualifier annotation (in a JSR330 way), to identify which implementation should
 be injected.
