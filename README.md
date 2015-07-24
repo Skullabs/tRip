@@ -269,5 +269,28 @@ It is a managed service that appears once in the context. Every consumer will re
 
 Opposed to stateless services, ```Singleton``` services have a long life cycle. Thus tRip only supports the JDK's ```PostConstruct``` annotation. It is called every time a singleton service is called.
 
+### Using CDI (JSR-330) Annotations
+The Java CDI API (JSR-330) was designed to be a simple and intuitive Inversion of Control API. It is based on annotations and behaves very similar to tRip native SPI API. Since tRip 2.x version, tRip offers a JSR-330 support and also the ```@javax.enterprise.inject.Produces```. Bellow a comparison table between each JSR-330 annotations and tRip JSR-330 annotations.
+
+|Functionality|tRip|CDI JSR-330|
+|:-------------|:-------------:|:-------------:|
+|Singleton services|trip.spi.Singleton|javax.inject.Singleton|
+|Stateless services|trip.spi.Stateless|N/A|
+|Inject a service into a field|trip.spi.Provided|javax.inject.Inject|
+|Inject all services into a field|trip.spi.ProvidedServices|N/A|
+|Producer/factory method pattern|trip.spi.Producer|javax.enterprise.inject.Produces (JSR-299)|
+
+#### A note about ```@javax.inject.Singleton``` annotated services
+The default tRip's ```@Singleton``` annotation will expose only the interface(or abstract class) defined
+on ```Singleton.exposedAs``` attribute, or the concrete class itself if no attribute is set at all.
+
+When you are using JSR-330's ```@Singleton``` annotation, is expected that the container should be able
+to inject corretly a service (either by the concrete class or through the interface) automatically. tRip
+JSR-330 respect this rule and correctly injects the needed service as defined by the JSR-330 spec.
+
+### Contributing
+tRip is a open source software. It means any help, improvement or bug fixed are welcome. Even typos on
+this documentation is a very welcome improvement.
+
 ### License
 tRip is Apache 2.0 licensed.
