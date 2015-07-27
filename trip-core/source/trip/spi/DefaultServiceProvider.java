@@ -200,7 +200,6 @@ public class DefaultServiceProvider implements ServiceProvider {
 		return (ProducerFactory<T>)this.producers.get( interfaceClazz, condition );
 	}
 
-	@Override
 	public QualifierExtractor getQualifierExtractor() {
 		return qualifierExtractor;
 	}

@@ -48,6 +48,7 @@ public interface ProviderContext {
 	 * {@code key} was found.
 	 *
 	 * @param key
+	 * @param <T>
 	 * @return
 	 */
 	<T> T attribute( Class<T> key );
