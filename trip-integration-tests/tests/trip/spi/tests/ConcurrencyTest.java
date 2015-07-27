@@ -12,13 +12,13 @@ import lombok.val;
 import org.junit.After;
 import org.junit.Test;
 
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.tests.concurrency.PrinterRunner;
 
 public class ConcurrencyTest {
 
 	final static int NUMBER_OF_CONSUMER = 30;
-	final ServiceProvider provider = new ServiceProvider();
+	final DefaultServiceProvider provider = new DefaultServiceProvider();
 	final ExecutorService executor = Executors.newCachedThreadPool();
 	final CountDownLatch counter = new CountDownLatch( NUMBER_OF_CONSUMER * 2 );
 

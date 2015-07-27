@@ -14,9 +14,4 @@ import java.lang.annotation.Target;
 public @interface Singleton {
 
 	Class<?> exposedAs() default Singleton.class;
-
-	/**
-	 * The name that identifies the service.
-	 */
-	String name() default "";
 }

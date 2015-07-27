@@ -7,12 +7,12 @@ import static org.junit.Assert.assertThat;
 import org.junit.Test;
 
 import trip.spi.Provided;
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProviderException;
 
 public class InjectionOfServiceDefinedByItsExposedTypeTest {
 
-	final ServiceProvider provider = new ServiceProvider();
+	final DefaultServiceProvider provider = new DefaultServiceProvider();
 
 	@Provided( exposedAs = Bean.class )
 	SerializableBean bean;

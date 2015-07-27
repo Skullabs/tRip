@@ -4,14 +4,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
 
 import lombok.RequiredArgsConstructor;
-import trip.spi.ServiceProvider;
+import trip.spi.DefaultServiceProvider;
 import trip.spi.ServiceProviderException;
 
 @RequiredArgsConstructor
 public class PrinterRunner implements Runnable {
 
 	final BlockingQueue<Object> events;
-	final ServiceProvider provider;
+	final DefaultServiceProvider provider;
 	final CountDownLatch couter;
 
 	@Override

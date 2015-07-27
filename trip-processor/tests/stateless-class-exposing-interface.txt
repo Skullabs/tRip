@@ -10,7 +10,6 @@ public class InterfaceStateless1612123513
 	public void voidMethod(  ) {
 		try {
 			final sample.project.ServiceFromInterface instance = newInstance();
-			postConstructInterface1612123513( instance );
 			try {
 				instance.voidMethod(  );
 			} finally {
@@ -24,7 +23,6 @@ public class InterfaceStateless1612123513
 	public Long sum( Double arg0,Integer arg1 ) {
 		try {
 			final sample.project.ServiceFromInterface instance = newInstance();
-			postConstructInterface1612123513( instance );
 			try {
 				final Long returnValue = instance.sum( arg0,arg1 );
 				return returnValue;
@@ -41,12 +39,7 @@ public class InterfaceStateless1612123513
 		provider.provideOn( instance );
 		return instance;
 	}
-	
-	void postConstructInterface1612123513(
-			final sample.project.ServiceFromInterface instance ) throws Throwable {
-		instance.sum();
-	}
-	
+
 	void preDestroyInterface1612123513(
 			final sample.project.ServiceFromInterface instance ) throws Throwable {
 		instance.voidMethod();

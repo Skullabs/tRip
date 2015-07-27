@@ -1,6 +1,7 @@
 package trip.spi;
 
-@Singleton( name = "foo" )
+@Foo
+@Singleton
 public class PrintableFoo implements PrintableWord {
 
 	@Override

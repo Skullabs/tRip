@@ -9,22 +9,12 @@ public class PostConstructAndPreDestroyStatelessService {
 
 	@javax.annotation.PostConstruct
 	public void postConstructorJava() {
-		status.calledPostContructJavaAnnotation = true;
-	}
-
-	@trip.spi.PostConstruct
-	public void postConstructorTrip() {
-		status.calledPostContructTrip = true;
+		status.calledPostContructJavaAnnotation++;
 	}
 
 	@javax.annotation.PreDestroy
 	public void preDestroyJava() {
-		status.calledPreDestroyJavaAnnotation = true;
-	}
-
-	@trip.spi.PreDestroy
-	public void preDestroyTrip() {
-		status.calledPreDestroyTrip = true;
+		status.calledPreDestroyJavaAnnotation++;
 	}
 
 	public Status getStatus() {
@@ -33,9 +23,6 @@ public class PostConstructAndPreDestroyStatelessService {
 }
 
 class Status {
-
-	boolean calledPreDestroyJavaAnnotation;
-	boolean calledPreDestroyTrip;
-	boolean calledPostContructJavaAnnotation;
-	boolean calledPostContructTrip;
+	int calledPreDestroyJavaAnnotation = 0;
+	int calledPostContructJavaAnnotation = 0;
 }

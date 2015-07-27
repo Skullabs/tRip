@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 @GeneratedFromStatelessService
-@Singleton( name="FakeStatelessService" )
+@Singleton
 public class MyFakeStatelessService extends Readable {
 
 	@Provided

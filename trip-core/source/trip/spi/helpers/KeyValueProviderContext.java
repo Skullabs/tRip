@@ -1,10 +1,14 @@
 package trip.spi.helpers;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.Accessors;
 import trip.spi.ProviderContext;
 
@@ -49,5 +53,10 @@ public class KeyValueProviderContext implements ProviderContext {
 	@SuppressWarnings( "unchecked" )
 	public <T> T attribute( Class<T> key ) {
 		return (T)attribute( key.getCanonicalName() );
+	}
+
+	@Override
+	public Collection<Class<? extends Annotation>> qualifierAnnotations() {
+		return Collections.emptyList();
 	}
 }

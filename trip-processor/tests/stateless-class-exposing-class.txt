@@ -1,8 +1,8 @@
 package sample.project;
 
-@trip.spi.Singleton( name="my-self", exposedAs=sample.project.ServiceFromInterface.class )
+@trip.spi.Singleton( exposedAs=sample.project.ServiceFromInterface.class )
 @trip.spi.GeneratedFromStatelessService
-public class ServiceFromInterfaceStateless3994859186
+public class ServiceFromInterfaceStateless3407109653
 	extends sample.project.ServiceFromInterface {
 
 	@trip.spi.Provided trip.spi.ServiceProvider provider;
@@ -10,11 +10,10 @@ public class ServiceFromInterfaceStateless3994859186
 	public void voidMethod(  ) {
 		try {
 			final sample.project.ServiceFromInterface instance = newInstance();
-			postConstructServiceFromInterface3994859186( instance );
 			try {
 				instance.voidMethod(  );
 			} finally {
-				preDestroyServiceFromInterface3994859186( instance );
+				preDestroyServiceFromInterface3407109653( instance );
 			}
 		} catch ( Throwable cause ) {
 			throw new RuntimeException( cause );
@@ -24,12 +23,11 @@ public class ServiceFromInterfaceStateless3994859186
 	public Long sum( Double arg0,Integer arg1 ) {
 		try {
 			final sample.project.ServiceFromInterface instance = newInstance();
-			postConstructServiceFromInterface3994859186( instance );
 			try {
 				final Long returnValue = instance.sum( arg0,arg1 );
 				return returnValue;
 			} finally {
-				preDestroyServiceFromInterface3994859186( instance );
+				preDestroyServiceFromInterface3407109653( instance );
 			}
 		} catch ( Throwable cause ) {
 			throw new RuntimeException( cause );
@@ -41,13 +39,8 @@ public class ServiceFromInterfaceStateless3994859186
 		provider.provideOn( instance );
 		return instance;
 	}
-	
-	void postConstructServiceFromInterface3994859186(
-			final sample.project.ServiceFromInterface instance ) throws Throwable {
-		instance.sum();
-	}
-	
-	void preDestroyServiceFromInterface3994859186(
+
+	void preDestroyServiceFromInterface3407109653(
 			final sample.project.ServiceFromInterface instance ) throws Throwable {
 		instance.voidMethod();
 	}

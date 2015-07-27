@@ -1,6 +1,7 @@
 package trip.spi;
 
 import java.lang.annotation.Annotation;
+import java.util.Collection;
 
 /**
  * Object holding data about and provided object. It is useful when producing
@@ -11,14 +12,22 @@ public interface ProviderContext {
 
 	/**
 	 * The list of annotations present on the target.
-	 * 
+	 *
 	 * @return
 	 */
 	<A extends Annotation> A getAnnotation( Class<A> anntationClass );
 
 	/**
+	 * The list of annotations present on the target that should be used as
+	 * filter to define which service should be injected.
+	 *
+	 * @return
+	 */
+	Collection<Class<? extends Annotation>> qualifierAnnotations();
+
+	/**
 	 * The type is expected to generate an object.
-	 * 
+	 *
 	 * @return
 	 */
 	Class<?> targetType();
@@ -27,7 +36,7 @@ public interface ProviderContext {
 	 * Retrieve an attribute ( identified by {@code key} ), from current
 	 * context. Returns {@code null} if no object associated to the provided
 	 * {@code key} was found.
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -37,8 +46,9 @@ public interface ProviderContext {
 	 * Retrieve an attribute ( identified by {@code key} ), from current
 	 * context. Returns {@code null} if no object associated to the provided
 	 * {@code key} was found.
-	 * 
+	 *
 	 * @param key
+	 * @param <T>
 	 * @return
 	 */
 	<T> T attribute( Class<T> key );

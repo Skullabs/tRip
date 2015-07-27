@@ -12,9 +12,4 @@ import java.lang.annotation.Target;
 public @interface Stateless {
 
 	Class<?> exposedAs() default Stateless.class;
-
-	/**
-	 * The name that identifies the service.
-	 */
-	String name() default "";
 }

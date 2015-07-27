@@ -11,7 +11,7 @@ import org.junit.Test;
 
 public class ProviderTest {
 
-	final ServiceProvider provider = new ServiceProvider();
+	final DefaultServiceProvider provider = new DefaultServiceProvider();
 	
 	@Before
 	public void grantThatProvidedHasNoCachedData() {

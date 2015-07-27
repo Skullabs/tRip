@@ -22,4 +22,17 @@ public class ChainedCondition<T> implements Condition<T> {
 	public void add( final Condition<T> condition ) {
 		conditions.add( condition );
 	}
+
+	@Override
+	public String toString() {
+		final StringBuilder buffer = new StringBuilder();
+		boolean isFirst = true;
+		for ( final Condition<T> c : conditions ){
+			if ( !isFirst )
+				buffer.append(" AND ");
+			buffer.append(c.toString());
+			isFirst=false;
+		}
+		return buffer.toString();
+	}
 }
