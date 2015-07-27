@@ -1,6 +1,5 @@
 package trip.spi;
 
-import trip.spi.helpers.QualifierExtractor;
 import trip.spi.helpers.filter.Condition;
 
 /**
@@ -87,11 +86,4 @@ public interface ServiceProvider {
 	 * @param object - the objects that will receive "injectable" services.
 	 */
 	void provideOn(Object object);
-
-	/**
-	 * Returns the QualifierExtractor.
-	 *
-	 * @return the QualifierExtractor.
-	 */
-	QualifierExtractor getQualifierExtractor();
 }
