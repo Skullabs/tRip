@@ -108,10 +108,7 @@ public class DefaultServiceProvider implements ServiceProvider {
 
 	protected <T> Iterable<T> loadAllServicesImplementingTheInterface( final Class<T> interfaceClazz ) {
 		try {
-			final Iterable<T> iterable = loadServiceProvidersFor( interfaceClazz );
-			provideOn( iterable );
-			providerFor( interfaceClazz, iterable );
-			return iterable;
+			return loadServiceProvidersFor( interfaceClazz );
 		} catch ( final StackOverflowError cause ) {
 			throw new ServiceConfigurationError(
 				"Could not load implementations of " + interfaceClazz.getCanonicalName() +
@@ -119,15 +116,19 @@ public class DefaultServiceProvider implements ServiceProvider {
 		}
 	}
 
-	protected <T> Iterable<T> loadServiceProvidersFor(
-			final Class<T> interfaceClazz ) {
+	protected <T> Iterable<T> loadServiceProvidersFor( final Class<T> interfaceClazz ) {
 		final List<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
-		if ( !iterableInterfaces.isEmpty() )
-			return singletonContext.instantiate( iterableInterfaces );
-		T instance = singletonContext.instantiate( interfaceClazz );
-		if ( instance != null )
-			return new SingleObjectIterable<>( instance );
-		return EmptyIterable.instance();
+		Iterable<T> instances = null;
+		if ( !iterableInterfaces.isEmpty() ) {
+			instances = singletonContext.instantiate( iterableInterfaces );
+			providerFor( interfaceClazz, instances );
+		}
+		if ( instances == null ){
+			final T instance = singletonContext.instantiate( interfaceClazz );
+			instances = instance == null ? EmptyIterable.instance() : new SingleObjectIterable<>( instance );
+		}
+		provideOn( instances );
+		return instances;
 	}
 
 	public <T> List<Class<T>> loadClassesImplementing( final Class<T> interfaceClazz ) {

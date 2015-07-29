@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 
+@Log
 @RequiredArgsConstructor
 class SingletonContext {
 
@@ -29,6 +31,7 @@ class SingletonContext {
 			final T instance = clazz.newInstance();
 			return instance;
 		} catch ( final IllegalAccessException | InstantiationException cause ) {
+			log.finest("Can't instantiate " + clazz + ": " + cause.getMessage());
 			return null;
 		}
 	}
