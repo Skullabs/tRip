@@ -18,7 +18,7 @@ public class PrinterRunner implements Runnable {
 	public void run() {
 		try {
 			Object last = null;
-			while ( last != "END" ) {
+			while ( last == null || !last.equals("END") ) {
 				last = nextEvent();
 				instantiateService().printNames();
 			}

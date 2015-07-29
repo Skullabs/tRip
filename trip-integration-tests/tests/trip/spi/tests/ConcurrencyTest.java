@@ -17,10 +17,10 @@ import trip.spi.tests.concurrency.PrinterRunner;
 
 public class ConcurrencyTest {
 
-	final static int NUMBER_OF_CONSUMER = 30;
+	final static int NUMBER_OF_CONSUMER = 500;
 	final DefaultServiceProvider provider = new DefaultServiceProvider();
-	final ExecutorService executor = Executors.newCachedThreadPool();
 	final CountDownLatch counter = new CountDownLatch( NUMBER_OF_CONSUMER * 2 );
+	final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_CONSUMER * 2);
 
 	@SneakyThrows
 	@Test( timeout = 4000 )
@@ -47,7 +47,6 @@ class MessageDispatcher implements Runnable {
 	@Override
 	@SneakyThrows
 	public void run() {
-		Thread.sleep( 100 );
 		inbox.put( "NEXT" );
 		inbox.put( "END" );
 	}

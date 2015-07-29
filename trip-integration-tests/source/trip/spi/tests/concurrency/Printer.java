@@ -6,6 +6,6 @@ import trip.spi.Singleton;
 public class Printer {
 
 	public void print( final String msg ) {
-		System.out.println( msg );
+		//System.out.println( msg );
 	}
 }

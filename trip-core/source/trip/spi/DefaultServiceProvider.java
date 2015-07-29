@@ -106,9 +106,9 @@ public class DefaultServiceProvider implements ServiceProvider {
 		return iterable;
 	}
 
-	protected <T> Iterable<T> loadAllServicesImplementingTheInterface( final Class<T> interfaceClazz ) {
+	private <T> Iterable<T> loadAllServicesImplementingTheInterface( final Class<T> interfaceClazz ) {
 		try {
-			return loadServiceProvidersFor( interfaceClazz );
+			return loadServiceFor( interfaceClazz );
 		} catch ( final StackOverflowError cause ) {
 			throw new ServiceConfigurationError(
 				"Could not load implementations of " + interfaceClazz.getCanonicalName() +
@@ -116,18 +116,18 @@ public class DefaultServiceProvider implements ServiceProvider {
 		}
 	}
 
-	protected <T> Iterable<T> loadServiceProvidersFor( final Class<T> interfaceClazz ) {
+	private <T> Iterable<T> loadServiceFor( final Class<T> interfaceClazz ) {
 		final List<Class<T>> iterableInterfaces = loadClassesImplementing( interfaceClazz );
 		Iterable<T> instances = null;
-		if ( !iterableInterfaces.isEmpty() ) {
+		if ( !iterableInterfaces.isEmpty() ){
 			instances = singletonContext.instantiate( iterableInterfaces );
+			provideOn( instances );
 			providerFor( interfaceClazz, instances );
-		}
-		if ( instances == null ){
+		} else {
 			final T instance = singletonContext.instantiate( interfaceClazz );
 			instances = instance == null ? EmptyIterable.instance() : new SingleObjectIterable<>( instance );
+			provideOn( instances );
 		}
-		provideOn( instances );
 		return instances;
 	}
 
@@ -146,7 +146,7 @@ public class DefaultServiceProvider implements ServiceProvider {
 
 	@Override
 	public <T> void providerFor( final Class<T> interfaceClazz, final ProducerFactory<T> provider ) {
-		this.producers.memorizeProviderForClazz( provider, interfaceClazz );
+			this.producers.memorizeProviderForClazz( provider, interfaceClazz );
 	}
 
 	@Override

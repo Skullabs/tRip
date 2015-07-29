@@ -58,7 +58,7 @@ public class SingleAndManyServicesInjectionTest {
 
 	@Test
 	public void ensureThatNonManagedClassesAreCreatedEveryTime() {
-		InjectableClass injectable = provider.load( InjectableClass.class );
+		final InjectableClass injectable = provider.load( InjectableClass.class );
 		assertNotNull( injectable );
 		assertPrintablesArePopulatedAsExpected( injectable );
 		assertPrintableFoosArePopulatedAsExpected( injectable );
