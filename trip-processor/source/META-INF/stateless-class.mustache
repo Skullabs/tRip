@@ -17,6 +17,7 @@ public class {{typeName}}Stateless{{identifaction}}
 		try {
 			final {{{implementationCanonicalName}}} instance = newInstance();
 			try {
+				postConstruct{{typeName}}{{identifaction}}( instance );
 				{{#returnable}}
 				final {{{returnType}}} returnValue = instance.{{name}}( {{parametersAsString}} );
 				return returnValue;
@@ -33,16 +34,23 @@ public class {{typeName}}Stateless{{identifaction}}
 	}
 	{{/exposedMethods}}
 
-	{{{implementationCanonicalName}}} newInstance() throws trip.spi.ServiceProviderException {
+	private {{{implementationCanonicalName}}} newInstance() throws trip.spi.ServiceProviderException {
 		final {{{implementationCanonicalName}}} instance = new {{{implementationCanonicalName}}}();
 		provider.provideOn( instance );
 		return instance;
 	}
 
-	void preDestroy{{typeName}}{{identifaction}}(
+	private static void preDestroy{{typeName}}{{identifaction}}(
 			final {{{implementationCanonicalName}}} instance ) throws Throwable {
 		{{#preDestroyMethods}}
 		instance.{{name}}();
 		{{/preDestroyMethods}}
+	}
+
+	private static void postConstruct{{typeName}}{{identifaction}}(
+			final {{{implementationCanonicalName}}} instance ) throws Throwable {
+		{{#postConstructMethods}}
+		instance.{{name}}();
+		{{/postConstructMethods}}
 	}
 }

@@ -12,7 +12,7 @@ import trip.spi.ServiceProviderException;
 
 public class PostConstructAndPreDestroyStatelessServiceTest {
 
-	@Provided
+//	@Provided
 	PostConstructAndPreDestroyStatelessService stateless;
 
 	@Provided
@@ -20,7 +20,9 @@ public class PostConstructAndPreDestroyStatelessServiceTest {
 
 	@Before
 	public void provideDependencies() throws ServiceProviderException {
-		new DefaultServiceProvider().provideOn( this );
+		final DefaultServiceProvider provider = new DefaultServiceProvider();
+		stateless = provider.load(PostConstructAndPreDestroyStatelessService.class);
+		provider.provideOn( this );
 	}
 
 	@Test

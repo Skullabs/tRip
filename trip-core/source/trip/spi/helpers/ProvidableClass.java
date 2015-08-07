@@ -99,7 +99,7 @@ class PostConstructorMethod implements Consumer<Object> {
 		try {
 			method.invoke(target);
 		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			throw new ServiceProviderException(e);
+			throw new ServiceProviderException("Can't call "+method.toString(),e);
 		}
 	}
 }

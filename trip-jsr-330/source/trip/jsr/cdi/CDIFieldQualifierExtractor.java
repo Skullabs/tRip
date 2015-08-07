@@ -5,10 +5,16 @@ import java.lang.reflect.Field;
 
 import javax.inject.Inject;
 import javax.inject.Qualifier;
+import javax.inject.Singleton;
 
 import trip.spi.helpers.FieldQualifierExtractor;
 
 public class CDIFieldQualifierExtractor implements FieldQualifierExtractor {
+
+	@Override
+	public boolean isAnnotatedWithSingletonAnnotation( Class<?> clazz ) {
+		return clazz.isAnnotationPresent( Singleton.class );
+	}
 
 	@Override
 	public boolean isAnnotatedWithQualifierAnnotation(Class<? extends Annotation> ann) {

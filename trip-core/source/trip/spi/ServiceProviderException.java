@@ -11,4 +11,8 @@ public class ServiceProviderException extends RuntimeException {
 	public ServiceProviderException( Throwable cause ) {
 		super( cause );
 	}
+
+	public ServiceProviderException( String message, Throwable cause ) {
+		super( message, cause );
+	}
 }
