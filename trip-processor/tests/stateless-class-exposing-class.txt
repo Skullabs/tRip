@@ -11,8 +11,6 @@ public class ServiceFromInterfaceStateless3407109653
 		try {
 			final sample.project.ServiceFromInterface instance = newInstance();
 			try {
-				postConstructServiceFromInterface3407109653( instance );
-
 				instance.voidMethod(  );
 			} finally {
 				preDestroyServiceFromInterface3407109653( instance );
@@ -45,10 +43,5 @@ public class ServiceFromInterfaceStateless3407109653
 	private static void preDestroyServiceFromInterface3407109653(
 			final sample.project.ServiceFromInterface instance ) throws Throwable {
 		instance.voidMethod();
-	}
-
-	private static void postConstructServiceFromInterface3407109653(
-			final sample.project.ServiceFromInterface instance ) throws Throwable {
-		instance.sum();
 	}
 }

@@ -19,13 +19,6 @@ public class QualifierExtractor {
 		return anns;
 	}
 
-	public boolean isAnnotatedWithSingletonAnnotation(Class<?> clazz) {
-		for ( final FieldQualifierExtractor extractor : extractors )
-			if ( extractor.isAnnotatedWithSingletonAnnotation(clazz) )
-				return true;
-		return false;
-	}
-
 	public boolean isAnnotatedWithQualifierAnnotation( Class<? extends Annotation> ann ){
 		for ( final FieldQualifierExtractor extractor : extractors )
 			if ( extractor.isAnnotatedWithQualifierAnnotation(ann) )

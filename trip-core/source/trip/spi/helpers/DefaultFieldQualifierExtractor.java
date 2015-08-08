@@ -6,7 +6,6 @@ import java.lang.reflect.Field;
 import trip.spi.Provided;
 import trip.spi.ProvidedServices;
 import trip.spi.Qualifier;
-import trip.spi.Singleton;
 
 public class DefaultFieldQualifierExtractor implements FieldQualifierExtractor {
 
@@ -23,10 +22,5 @@ public class DefaultFieldQualifierExtractor implements FieldQualifierExtractor {
 	@Override
 	public boolean isAManyElementsProvider( Field field ) {
 		return field.isAnnotationPresent( ProvidedServices.class );
-	}
-
-	@Override
-	public boolean isAnnotatedWithSingletonAnnotation( Class<?> clazz ) {
-		return clazz.isAnnotationPresent( Singleton.class );
 	}
 }
