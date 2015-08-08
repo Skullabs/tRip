@@ -31,7 +31,7 @@ If you intent to use CDI (JSR330) annotations, please include the following libr
 ```xml
 <dependency>
 	<groupId>io.skullabs.trip</groupId>
-	<artifactId>trip-core</artifactId>
+	<artifactId>trip-jsr-330</artifactId>
 	<version>${version.trip}</version>
 	<!-- it could be 'provided' if you have included javax.inject manually -->
 	<!-- scope>provided</scope -->
