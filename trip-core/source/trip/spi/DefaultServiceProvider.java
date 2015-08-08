@@ -22,17 +22,15 @@ import trip.spi.helpers.filter.Condition;
 @SuppressWarnings( { "rawtypes", "unchecked" } )
 public class DefaultServiceProvider implements ServiceProvider {
 
-	final SingletonContext singletonContext = new SingletonContext();
-	final Map<Class<?>, ProvidableClass<?>> providableClassCache = new HashMap<>();
 	final Map<Class<?>, Iterable<Class<?>>> implementedClasses = new HashMap<>();
+	final SingletonContext singletonContext = new SingletonContext();
 
-	final QualifierExtractor qualifierExtractor;
 	final Map<Class<?>, Iterable<?>> providers;
 	final ProducerFactoryMap producers;
 
 	public DefaultServiceProvider() {
 		this.providers = createDefaultProvidedData();
-		this.qualifierExtractor = createQualifierExtractor();
+		singletonContext.setQualifierExtractor( createQualifierExtractor() );
 		runHookBeforeProducersAreReady();
 		this.producers = loadAllProducers();
 		runAllStartupListeners();
@@ -167,24 +165,11 @@ public class DefaultServiceProvider implements ServiceProvider {
 	@Override
 	public void provideOn( final Object object ) {
 		try {
-			final ProvidableClass<?> providableClass = retrieveProvidableClass( object.getClass() );
+			final ProvidableClass<?> providableClass = singletonContext.retrieveProvidableClass( object.getClass() );
 			providableClass.provide( object, this );
 		} catch ( final Exception cause ) {
 			throw new ServiceProviderException( cause );
 		}
-	}
-
-	private ProvidableClass<?> retrieveProvidableClass( final Class<?> targetClazz ) {
-		ProvidableClass<?> providableClass = providableClassCache.get( targetClazz );
-		if ( providableClass == null )
-			synchronized ( providableClassCache ) {
-				providableClass = providableClassCache.get( targetClazz );
-				if ( providableClass == null ) {
-					providableClass = ProvidableClass.wrap( qualifierExtractor, targetClazz );
-					providableClassCache.put( targetClazz, providableClass );
-				}
-			}
-		return providableClass;
 	}
 
 	private <T> T produceFromFactory( final Class<T> interfaceClazz, final Condition<T> condition, final ProviderContext context )
@@ -199,10 +184,6 @@ public class DefaultServiceProvider implements ServiceProvider {
 		if ( this.producers == null )
 			return null;
 		return (ProducerFactory<T>)this.producers.get( interfaceClazz, condition );
-	}
-
-	public QualifierExtractor getQualifierExtractor() {
-		return qualifierExtractor;
 	}
 
 }
