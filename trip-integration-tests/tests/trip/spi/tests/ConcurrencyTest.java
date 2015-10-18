@@ -5,7 +5,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.val;
 
@@ -17,37 +16,33 @@ import trip.spi.tests.concurrency.PrinterRunner;
 
 public class ConcurrencyTest {
 
-	final static int NUMBER_OF_CONSUMER = 500;
+	final static int NUMBER_OF_CONSUMER = Runtime.getRuntime().availableProcessors();
+	final static int NUMBER_OF_MESSAGES_PER_NODE = 2000000;
 	final DefaultServiceProvider provider = new DefaultServiceProvider();
-	final CountDownLatch counter = new CountDownLatch( NUMBER_OF_CONSUMER * 2 );
-	final ExecutorService executor = Executors.newFixedThreadPool(NUMBER_OF_CONSUMER * 2);
+	final CountDownLatch counter = new CountDownLatch( NUMBER_OF_MESSAGES_PER_NODE + 1 );
+	final ExecutorService executor = Executors.newFixedThreadPool( NUMBER_OF_CONSUMER );
 
 	@SneakyThrows
-	@Test( timeout = 4000 )
+	@Test( timeout = 6000 )
 	public void runConcurrentStressTestInStatelessCreation() {
-		for ( int i = 0; i < NUMBER_OF_CONSUMER; i++ ) {
-			val inbox = new LinkedBlockingQueue<Object>();
+		val inbox = new LinkedBlockingQueue<Object>();
+		sendMessagesToInbox( inbox );
+
+		final long start = System.currentTimeMillis();
+		for ( int i = 0; i < NUMBER_OF_CONSUMER; i++ )
 			executor.submit( new PrinterRunner( inbox, provider, counter ) );
-			executor.submit( new MessageDispatcher( inbox ) );
-		}
 		counter.await();
+		System.out.println( "Elapsed time: " + ( System.currentTimeMillis() - start ) + "ms" );
+	}
+
+	private void sendMessagesToInbox( final LinkedBlockingQueue<Object> inbox ) throws InterruptedException {
+		for ( int i = 0; i < NUMBER_OF_MESSAGES_PER_NODE; i++ )
+			inbox.put( "NEXT" );
+		inbox.put( "END" );
 	}
 
 	@After
 	public void shutdownConsumers() {
-		executor.shutdownNow();
-	}
-}
-
-@RequiredArgsConstructor
-class MessageDispatcher implements Runnable {
-
-	final LinkedBlockingQueue<Object> inbox;
-
-	@Override
-	@SneakyThrows
-	public void run() {
-		inbox.put( "NEXT" );
-		inbox.put( "END" );
+		executor.shutdown();
 	}
 }

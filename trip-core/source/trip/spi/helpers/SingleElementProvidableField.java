@@ -6,9 +6,9 @@ import java.util.Collection;
 
 import lombok.Value;
 import lombok.extern.java.Log;
+import trip.spi.DefaultServiceProvider.DependencyInjector;
 import trip.spi.Provided;
 import trip.spi.ProviderContext;
-import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
 import trip.spi.helpers.filter.ChainedCondition;
 import trip.spi.helpers.filter.Condition;
@@ -26,8 +26,9 @@ public class SingleElementProvidableField<T> implements ProvidableField {
 	final ProviderContext providerContext;
 
 	@Override
-	public void provide( final Object instance, final ServiceProvider provider )
-		throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
+	public void provide( Object instance, DependencyInjector provider )
+			throws ServiceProviderException, IllegalArgumentException, IllegalAccessException
+	{
 		final Object value = provider.load( fieldType, condition, providerContext );
 		if ( value == null )
 			log.warning( "No data found for " + fieldType.getCanonicalName() + ". Condition: " + condition );
@@ -36,6 +37,11 @@ public class SingleElementProvidableField<T> implements ProvidableField {
 
 	public void set( final Object instance, final Object value ) throws IllegalArgumentException, IllegalAccessException {
 		field.set( instance, value );
+	}
+
+	@Override
+	public String toString() {
+		return field.toString();
 	}
 
 	public static <T> ProvidableField from( Collection<Class<? extends Annotation>> qualifiers, final Field field ) {

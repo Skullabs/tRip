@@ -22,16 +22,15 @@ public class PrinterRunner implements Runnable {
 				last = nextEvent();
 				instantiateService().printNames();
 			}
+			// } catch ( final InterruptedException cause ) {
 		} catch ( final Throwable cause ) {
 			cause.printStackTrace();
 		}
 	}
 
-	Object nextEvent() {
+	Object nextEvent() throws InterruptedException {
 		try {
 			return events.take();
-		} catch ( final InterruptedException e ) {
-			throw new RuntimeException( e );
 		} finally {
 			couter.countDown();
 		}

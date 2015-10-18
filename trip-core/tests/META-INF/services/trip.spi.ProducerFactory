@@ -1,1 +1,3 @@
 trip.spi.ClosureProvider
+trip.spi.recursive.UserProducer
+trip.spi.recursive.UserServiceProducer

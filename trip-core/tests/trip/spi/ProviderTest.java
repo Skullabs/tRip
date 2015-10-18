@@ -15,9 +15,9 @@ public class ProviderTest {
 	
 	@Before
 	public void grantThatProvidedHasNoCachedData() {
-		Iterable<?> nullIterable = this.provider.providers.get( Printable.class );
+		Iterable<?> nullIterable = provider.dependencies.get( Printable.class );
 		assertNull(nullIterable);
-		nullIterable = this.provider.implementedClasses.get( Printable.class );
+		nullIterable = provider.implementedClasses.implementedClasses.get( Printable.class );
 		assertNull(nullIterable);
 	}
 
@@ -25,25 +25,25 @@ public class ProviderTest {
 	public void grantThatInjectTestableResourcesButKeepItCachedAsExpected() throws ServiceProviderException {
 		grantThatRetrieveAllClassesThatImplementsAnInterface();
 
-		Iterable<Class<?>> implementations = this.provider.implementedClasses.get( Printable.class );
+		final Iterable<Class<?>> implementations = provider.implementedClasses.implementedClasses.get( Printable.class );
 		grantThatRetrieveAWellImplementedPrintableInstanceAsExpected();
-		assertEquals( implementations , this.provider.implementedClasses.get( Printable.class ));
+		assertEquals( implementations, provider.implementedClasses.implementedClasses.get( Printable.class ) );
 
-		Iterable<?> printableInjectables = this.provider.providers.get( Printable.class );
+		final Iterable<?> printableInjectables = provider.dependencies.get( Printable.class );
 		grantThatRetrieveAWellImplementedPrintableInstanceAsExpected();
-		assertEquals( printableInjectables, this.provider.providers.get( Printable.class ) );
+		assertEquals( printableInjectables, provider.dependencies.get( Printable.class ) );
 	}
 
 	private void grantThatRetrieveAllClassesThatImplementsAnInterface() {
-		Iterable<Class<Printable>> implementations = this.provider.loadClassesImplementing( Printable.class );
-		for ( Class<Printable> clazz : implementations )
+		final Iterable<Class<Printable>> implementations = provider.implementedClasses.loadClassesImplementing( Printable.class );
+		for ( final Class<Printable> clazz : implementations )
 			if ( PrintableHello.class.equals(clazz) )
 				return;
 		fail( "Expected to find a Printable implementation." );
 	}
 
 	private void grantThatRetrieveAWellImplementedPrintableInstanceAsExpected() throws ServiceProviderException {
-		Printable printable = this.provider.load( Printable.class );
+		final Printable printable = provider.load( Printable.class );
 		assertThat( printable.toString(), is( "Hello World." ) );
 	}
 }

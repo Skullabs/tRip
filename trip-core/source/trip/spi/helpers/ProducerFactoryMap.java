@@ -9,49 +9,82 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import lombok.experimental.Delegate;
-import lombok.experimental.ExtensionMethod;
+import trip.spi.DefaultServiceProvider.DependencyInjector;
 import trip.spi.ProducerFactory;
+import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
-import trip.spi.helpers.filter.Filter;
 
-@ExtensionMethod( Filter.class )
-public class ProducerFactoryMap implements Map<Class<?>, List<ProducerFactory<?>>> {
+@SuppressWarnings( "rawtypes" )
+public class ProducerFactoryMap {
 
-	@Delegate
-	final Map<Class<?>, List<ProducerFactory<?>>> map = new HashMap<Class<?>, List<ProducerFactory<?>>>();
+	final Map<Class<?>, List<Class<ProducerFactory>>> producerImplementationClasses = new HashMap<>();
+	final Map<Class<?>, List<ProducerFactory<?>>> map = new HashMap<>();
 
-	@SuppressWarnings("rawtypes")
-	public static ProducerFactoryMap from( final Iterable<ProducerFactory> iterable ) {
+	public static ProducerFactoryMap from( final Iterable<Class<ProducerFactory>> iterable ) {
 		final ProducerFactoryMap providers = new ProducerFactoryMap();
-		for ( final ProducerFactory<?> provider : iterable ) {
+		for ( final Class<ProducerFactory> provider : iterable ) {
 			final Class<?> clazz = getGenericClassFrom( provider );
 			providers.memorizeProviderForClazz(provider, clazz);
 		}
 		return providers;
 	}
 
-	private static Class<?> getGenericClassFrom( final ProducerFactory<?> provider ) {
-		final Type[] types = provider.getClass().getGenericInterfaces();
+	private static Class<?> getGenericClassFrom( Class<? extends ProducerFactory> clazz ) {
+		final Type[] types = clazz.getGenericInterfaces();
 		for ( final Type type : types )
 			if ( ( (ParameterizedType)type ).getRawType().equals( ProducerFactory.class ) )
 				return (Class<?>)( (ParameterizedType)type ).getActualTypeArguments()[0];
 		return null;
 	}
 
-	public void memorizeProviderForClazz( final ProducerFactory<?> provider, final Class<?> clazz ) {
-		List<ProducerFactory<?>> iterable = map.get( clazz );
+	private void memorizeProviderForClazz( final Class<ProducerFactory> provider, final Class<?> clazz ) {
+		List<Class<ProducerFactory>> iterable = producerImplementationClasses.get( clazz );
 		if ( iterable == null ) {
-			iterable = new ArrayList<ProducerFactory<?>>();
-			map.put( clazz, iterable );
+			iterable = new ArrayList<>();
+			producerImplementationClasses.put( clazz, iterable );
 		}
 		iterable.add( provider );
 	}
 
-	public ProducerFactory<?> get( final Class<?> clazz, final Condition<?> condition ) {
-		final List<ProducerFactory<?>> list = get( clazz );
+	public ProducerFactory<?> get( final Class<?> clazz, DependencyInjector injector, final Condition<?> condition ) {
+		final List<ProducerFactory<?>> list = getAll( clazz, injector );
+
 		if ( list == null )
 			return null;
+
 		return first(list, condition);
+	}
+
+	private List<ProducerFactory<?>> getAll( final Class<?> clazz, DependencyInjector injector ) {
+		List<ProducerFactory<?>> list = map.get( clazz );
+		if ( list == null )
+			synchronized ( map ) {
+				list = map.get( clazz );
+				if ( list == null ) {
+					list = loadAll( clazz, injector );
+					map.put( clazz, list );
+				}
+			}
+		return list;
+	}
+
+	private List<ProducerFactory<?>> loadAll( Class<?> clazz, DependencyInjector injector ) {
+		final List<ProducerFactory<?>> list = new ArrayList<>();
+		final List<Class<ProducerFactory>> factories = producerImplementationClasses.get( clazz );
+		if ( factories != null )
+			for ( final Class<ProducerFactory> factoryClass : factories )
+				list.add( injector.load( factoryClass, AnyObject.instance(), EmptyProviderContext.INSTANCE ) );
+		return list;
+	}
+
+	public void memorizeProviderForClazz( final ProducerFactory<?> provider, final Class<?> clazz ) {
+		synchronized ( map ) {
+			List<ProducerFactory<?>> list = map.get( clazz );
+			if ( list == null ) {
+				list = new ArrayList<>();
+				map.put( clazz, list );
+			}
+			list.add( provider );
+		}
 	}
 }

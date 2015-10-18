@@ -1,5 +1,8 @@
 package trip.spi;
 
+import static trip.spi.helpers.filter.Filter.filter;
+import trip.spi.helpers.EmptyProviderContext;
+import trip.spi.helpers.filter.AnyObject;
 import trip.spi.helpers.filter.Condition;
 
 /**
@@ -17,7 +20,9 @@ public interface ServiceProvider {
 	 * @param interfaceClazz - the service interface(or class) representation
 	 * @return - the loaded or created service.
 	 */
-	<T> T load(Class<T> interfaceClazz);
+	default <T> T load( final Class<T> serviceClazz ) {
+		return load( serviceClazz, AnyObject.instance() );
+	}
 
 	/**
 	 * Load a service represented by the argument {@code interfaceClazz}.
@@ -28,9 +33,13 @@ public interface ServiceProvider {
 	 * @param condition - a filter condition
 	 * @return - the loaded or created service.
 	 */
-	<T> T load(Class<T> interfaceClazz, Condition<T> condition);
+	default <T> T load( final Class<T> serviceClazz, final Condition<T> condition ) {
+		return load( serviceClazz, condition, EmptyProviderContext.INSTANCE );
+	}
 
-	<T> T load(Class<T> interfaceClazz, ProviderContext context);
+	default <T> T load( final Class<T> serviceClazz, final ProviderContext context ) {
+		return load( serviceClazz, AnyObject.instance(), context );
+	}
 
 	<T> T load(Class<T> interfaceClazz, Condition<T> condition, ProviderContext context);
 
@@ -43,7 +52,9 @@ public interface ServiceProvider {
 	 * @param condition - a filter condition
 	 * @return - all loaded or created services.
 	 */
-	<T> Iterable<T> loadAll(Class<T> interfaceClazz, Condition<T> condition);
+	default <T> Iterable<T> loadAll( final Class<T> serviceClazz, final Condition<T> condition ) {
+		return filter( loadAll( serviceClazz ), condition );
+	}
 
 	/**
 	 * Load all services represented by the argument {@code interfaceClazz}.

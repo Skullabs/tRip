@@ -6,9 +6,8 @@ import java.util.Collection;
 
 import lombok.RequiredArgsConstructor;
 import lombok.val;
+import trip.spi.DefaultServiceProvider.DependencyInjector;
 import trip.spi.ProvidedServices;
-import trip.spi.ServiceProvider;
-import trip.spi.ServiceProviderException;
 import trip.spi.helpers.filter.Condition;
 import trip.spi.helpers.filter.QualifierCondition;
 
@@ -21,8 +20,7 @@ public class ManyElementsProvidableField<T> implements ProvidableField {
 	final Condition<T> condition;
 
 	@Override
-	public void provide( final Object instance, final ServiceProvider provider )
-		throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
+	public void provide( Object instance, DependencyInjector provider ) throws Throwable {
 		final Object value = provider.loadAll( fieldType, condition );
 		set( instance, value );
 	}

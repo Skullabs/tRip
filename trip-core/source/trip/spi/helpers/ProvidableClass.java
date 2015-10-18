@@ -12,24 +12,20 @@ import java.util.function.Consumer;
 
 import javax.annotation.PostConstruct;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.Accessors;
 import trip.spi.GeneratedFromStatelessService;
-import trip.spi.ServiceProvider;
 import trip.spi.ServiceProviderException;
 
+@Getter
+@Accessors( fluent = true )
 @RequiredArgsConstructor
 public class ProvidableClass<T> {
 
 	final Class<T> targetClazz;
 	final Iterable<ProvidableField> fields;
 	final Consumer<Object> postConstructor;
-
-	public void provide( Object instance, ServiceProvider provider )
-			throws ServiceProviderException, IllegalArgumentException, IllegalAccessException {
-		for ( final ProvidableField field : fields )
-			field.provide( instance, provider );
-		postConstructor.accept(instance);
-	}
 
 	public static <T> ProvidableClass<T> wrap( QualifierExtractor extractor, Class<T> targetClazz ) {
 		return new ProvidableClass<T>(

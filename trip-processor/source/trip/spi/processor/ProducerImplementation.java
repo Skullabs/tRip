@@ -22,7 +22,6 @@ public class ProducerImplementation implements GenerableClass {
 	final String typeName;
 	final boolean expectsContext;
 	final String serviceFor;
-	final boolean stateless;
 	final List<String> annotations;
 
 	public ProducerImplementation(
@@ -30,27 +29,25 @@ public class ProducerImplementation implements GenerableClass {
 			final String providedMethod, final String type,
 			final String typeName,
 			final boolean expectsContext,
-			final String serviceFor, final boolean stateless,
+			final String serviceFor,
 			final List<String> annotations ) {
 		this.packageName = stripGenericsFrom( packageName );
 		this.provider = stripGenericsFrom( provider );
-		this.providerMethod = stripGenericsFrom( providedMethod );
+		providerMethod = stripGenericsFrom( providedMethod );
 		this.type = stripGenericsFrom( type );
 		this.typeName = stripGenericsFrom( typeName );
 		this.expectsContext = expectsContext;
 		this.serviceFor = serviceFor;
-		this.providerName = String.valueOf( createIdentifier() );
-		this.stateless = stateless;
+		providerName = String.valueOf( createIdentifier() );
 		this.annotations = annotations;
 	}
 
 	private long createIdentifier() {
 		final int hashCode =
-				String.format( "%s%s%s%s%s%s%s",
+				String.format( "%s%s%s%s%s%s",
 						packageName, provider, providerMethod,
-						type, typeName, expectsContext, stateless )
+						type, typeName, expectsContext )
 						.hashCode();
-
 		return hashCode & 0xffffffffl;
 	}
 
@@ -68,7 +65,7 @@ public class ProducerImplementation implements GenerableClass {
 				method.getSimpleName().toString(),
 				typeAsString, typeName,
 				measureIfExpectsContextAsParameter( method ),
-				SingletonImplementation.getProvidedServiceClassAsStringOrNull( type ), false,
+				SingletonImplementation.getProvidedServiceClassAsStringOrNull( type ),
 				SingletonImplementation.getQualifierAnnotation(method) );
 	}
 
@@ -88,27 +85,27 @@ public class ProducerImplementation implements GenerableClass {
 	}
 
 	public String packageName() {
-		return this.packageName;
+		return packageName;
 	}
 
 	public String provider() {
-		return this.provider;
+		return provider;
 	}
 
 	public String providerMethod() {
-		return this.providerMethod;
+		return providerMethod;
 	}
 
 	public String providerName() {
-		return this.providerName;
+		return providerName;
 	}
 
 	public String type() {
-		return this.type;
+		return type;
 	}
 
 	public String typeName() {
-		return this.typeName;
+		return typeName;
 	}
 
 	@Override

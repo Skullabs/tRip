@@ -13,7 +13,7 @@ import trip.spi.helpers.QualifierExtractor;
 
 @Log
 @RequiredArgsConstructor
-class SingletonContext {
+public class SingletonContext {
 
 	final Map<Class<?>, Object> cache = new HashMap<>();
 	final Map<Class<?>, ProvidableClass<?>> providableClassCache = new HashMap<>();
@@ -24,11 +24,13 @@ class SingletonContext {
 	@SuppressWarnings("unchecked")
 	public <T> Iterable<T> instantiate( Iterable<Class<T>> classes ){
 		final List<T> list = new ArrayList<>();
-		for ( final Class<T> clazz : classes ){
-			T object = (T)cache.get(clazz);
-			if ( object == null )
-				cache.put( clazz, object = instantiate( clazz ) );
-			list.add(object);
+		synchronized ( cache ) {
+			for ( final Class<T> clazz : classes ) {
+				T object = (T)cache.get( clazz );
+				if ( object == null )
+					cache.put( clazz, object = instantiate( clazz ) );
+				list.add( object );
+			}
 		}
 		return list;
 	}
