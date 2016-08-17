@@ -1,5 +1,6 @@
 package trip.spi.inject.stateless;
 
+import static java.util.Collections.EMPTY_SET;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -55,11 +56,11 @@ public class StatelessClassGeneratorTest {
 	}
 
 	ExposedMethod returnableMethod() {
-		return new ExposedMethod( "sum", "Long", list( "Double", "Integer" ) );
+		return new ExposedMethod( "sum", "Long", list( "Double", "Integer" ), EMPTY_SET );
 	}
 
 	ExposedMethod voidMethod() {
-		return new ExposedMethod( "voidMethod", "void", emptyStringList() );
+		return new ExposedMethod( "voidMethod", "void", emptyStringList(), EMPTY_SET );
 	}
 
 	@SuppressWarnings("unchecked")

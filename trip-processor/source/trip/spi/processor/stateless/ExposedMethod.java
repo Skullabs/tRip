@@ -1,10 +1,9 @@
 package trip.spi.processor.stateless;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.lang.model.element.ExecutableElement;
-import javax.lang.model.element.VariableElement;
+import static javax.lang.model.type.TypeKind.TYPEVAR;
+import java.util.*;
+import javax.lang.model.element.*;
+import javax.lang.model.type.*;
 
 public class ExposedMethod {
 
@@ -18,15 +17,19 @@ public class ExposedMethod {
 	 */
 	final String returnType;
 
+	final String typeParameters;
+
 	/**
 	 * List of parameter types in Canonical Name notation.
 	 */
 	final List<String> parameterTypes;
 
-	public ExposedMethod( String name, String returnType, List<String> parameterTypes ) {
+	public ExposedMethod( String name, String returnType, List<String> parameterTypes, Set<String> typeParameters ) {
 		this.name = name;
 		this.returnType = returnType;
 		this.parameterTypes = parameterTypes;
+		this.typeParameters = typeParameters.isEmpty() ? "" :
+			"<" + String.join( ",", typeParameters ) + ">";
 	}
 
 	/**
@@ -58,16 +61,30 @@ public class ExposedMethod {
 	}
 
 	public static ExposedMethod from( ExecutableElement method ) {
-		String name = method.getSimpleName().toString();
+		final String name = method.getSimpleName().toString();
 		String returnType = method.getReturnType().toString();
-		List<String> parameterTypes = extractParameters( method );
-		return new ExposedMethod( name, returnType, parameterTypes );
+		final List<String> parameterTypes = extractParameters( method );
+		return new ExposedMethod( name, returnType, parameterTypes, extractTypeParameters( method ) );
 	}
 
 	static List<String> extractParameters( ExecutableElement method ) {
-		List<String> list = new ArrayList<String>();
-		for ( VariableElement parameter : method.getParameters() )
+		final List<String> list = new ArrayList<String>();
+		for ( final VariableElement parameter : method.getParameters() )
 			list.add( parameter.asType().toString() );
+		return list;
+	}
+
+	static Set<String> extractTypeParameters( ExecutableElement method ) {
+		final Set<String> list = new HashSet<>();
+		for ( final VariableElement parameter : method.getParameters() ) {
+			if ( parameter.asType() instanceof DeclaredType ) {
+				final DeclaredType declaredType = (DeclaredType)parameter.asType();
+				for( final TypeMirror mirror : declaredType.getTypeArguments() ) {
+					if ( TYPEVAR.equals( mirror.getKind() ) )
+						list.add( mirror.toString() );
+				}
+			}
+		}
 		return list;
 	}
 }
